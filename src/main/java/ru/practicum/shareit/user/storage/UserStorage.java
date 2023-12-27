@@ -6,6 +6,7 @@ import java.util.Collection;
 
 public interface UserStorage {
     User create(User user);
+
     boolean existsByEmail(String name);
 
     User update(long userId, User user);

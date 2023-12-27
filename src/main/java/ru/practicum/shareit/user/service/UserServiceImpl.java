@@ -11,7 +11,7 @@ import java.util.Collection;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
     private final UserStorage userStorage;
 
 
@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User update(long userId, User user) {
-        return userStorage.update(userId,user);
+        return userStorage.update(userId, user);
     }
 
     @Override
