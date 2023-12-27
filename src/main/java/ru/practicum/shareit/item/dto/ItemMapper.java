@@ -8,9 +8,7 @@ public class ItemMapper {
                 item.getId(),
                 item.getName(),
                 item.getDescription(),
-                item.getAvailable()
-                // item.getRequest() != null ? item.getRequest().getId() : null
-        );
+                item.getAvailable());
     }
 
     public static Item toItem(long itemId, ItemCreateDto itemCreateDto, long userId) {

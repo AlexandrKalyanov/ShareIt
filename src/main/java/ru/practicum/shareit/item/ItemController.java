@@ -27,7 +27,7 @@ public class ItemController {
     @PostMapping
     public ItemCreateDto create(@NotNull @RequestHeader(headerUser) long userId,
                                 @Valid @RequestBody ItemCreateDto itemCreateDto) {
-        log.info("Icome DTO: {}, user ID: {}", itemCreateDto, userId);
+        log.info("Income POST request DTO: {}, user ID: {}", itemCreateDto, userId);
         return itemService.create(userId, itemCreateDto);
     }
 
@@ -35,26 +35,28 @@ public class ItemController {
     public ItemUpdateDto update(@NotNull @RequestHeader(headerUser) long userId,
                                 @RequestBody ItemUpdateDto itemUpdateDto,
                                 @PathVariable long itemId) {
+        log.info("Income PATCH request DTO: {}, user ID: {}, item ID: {}", itemUpdateDto, userId, itemId);
         return itemService.update(userId, itemUpdateDto, itemId);
     }
 
     @GetMapping("/{itemId}")
     public ItemCreateDto findByItemId(@NotNull @RequestHeader(headerUser) long userId,
                                       @PathVariable long itemId) {
-
+        log.info("Income GET request: user ID {}, item ID {}", userId, itemId);
         return itemService.findByItemId(userId, itemId);
 
     }
 
     @GetMapping
     public List<ItemCreateDto> findAllByUser(@NotNull @RequestHeader(headerUser) long userId) {
+        log.info("Income GET request (find all by user): user ID {}", userId);
         return itemService.findAllByUser(userId);
     }
 
     @GetMapping("/search")
     public List<ItemCreateDto> searchItems(@NotNull @RequestHeader(headerUser) long userId,
                                            @NotNull @RequestParam String text) {
-        log.info("Params: user id: {}, text: {}", userId, text);
+        log.info("Income GET request (search items): user id: {}, text: {}", userId, text);
         return itemService.searchItems(userId, text);
     }
 
