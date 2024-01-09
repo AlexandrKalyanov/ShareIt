@@ -1,6 +1,6 @@
 package ru.practicum.shareit.user.storage;
 
-import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.model.User;
 
 import java.util.Collection;
 
@@ -9,7 +9,7 @@ public interface UserStorage {
 
     boolean existsByEmail(String name);
 
-    User update(long userId, User user);
+    User update(User user);
 
     User findById(long userId);
 

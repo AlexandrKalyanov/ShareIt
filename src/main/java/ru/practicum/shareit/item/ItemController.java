@@ -21,18 +21,18 @@ import java.util.List;
 public class ItemController {
 
     private final ItemService itemService;
-    private static final String headerUser = "X-Sharer-User-Id";
+    private static final String HEADER_USER = "X-Sharer-User-Id";
 
 
     @PostMapping
-    public ItemCreateDto create(@NotNull @RequestHeader(headerUser) long userId,
+    public ItemCreateDto create(@NotNull @RequestHeader(HEADER_USER) long userId,
                                 @Valid @RequestBody ItemCreateDto itemCreateDto) {
         log.info("Income POST request DTO: {}, user ID: {}", itemCreateDto, userId);
         return itemService.create(userId, itemCreateDto);
     }
 
     @PatchMapping("/{itemId}")
-    public ItemUpdateDto update(@NotNull @RequestHeader(headerUser) long userId,
+    public ItemUpdateDto update(@NotNull @RequestHeader(HEADER_USER) long userId,
                                 @RequestBody ItemUpdateDto itemUpdateDto,
                                 @PathVariable long itemId) {
         log.info("Income PATCH request DTO: {}, user ID: {}, item ID: {}", itemUpdateDto, userId, itemId);
@@ -40,7 +40,7 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    public ItemCreateDto findByItemId(@NotNull @RequestHeader(headerUser) long userId,
+    public ItemCreateDto findByItemId(@NotNull @RequestHeader(HEADER_USER) long userId,
                                       @PathVariable long itemId) {
         log.info("Income GET request: user ID {}, item ID {}", userId, itemId);
         return itemService.findByItemId(userId, itemId);
@@ -48,13 +48,13 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemCreateDto> findAllByUser(@NotNull @RequestHeader(headerUser) long userId) {
+    public List<ItemCreateDto> findAllByUser(@NotNull @RequestHeader(HEADER_USER) long userId) {
         log.info("Income GET request (find all by user): user ID {}", userId);
         return itemService.findAllByUser(userId);
     }
 
     @GetMapping("/search")
-    public List<ItemCreateDto> searchItems(@NotNull @RequestHeader(headerUser) long userId,
+    public List<ItemCreateDto> searchItems(@NotNull @RequestHeader(HEADER_USER) long userId,
                                            @NotNull @RequestParam String text) {
         log.info("Income GET request (search items): user id: {}, text: {}", userId, text);
         return itemService.searchItems(userId, text);

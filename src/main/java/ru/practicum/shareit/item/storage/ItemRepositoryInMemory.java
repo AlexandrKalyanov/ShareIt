@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class ItemStorageInMemory implements ItemStorage {
+public class ItemRepositoryInMemory implements ItemStorage {
     private final Map<Long, Item> itemList;
     private long id;
 

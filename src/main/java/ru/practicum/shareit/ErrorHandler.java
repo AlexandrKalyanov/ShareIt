@@ -21,7 +21,7 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseStatus(HttpStatus.CONFLICT)
     @ResponseBody
     public Map<String, String> handleValidateException(final ValidateException e) {
         return Map.of("ERROR", e.getMessage());

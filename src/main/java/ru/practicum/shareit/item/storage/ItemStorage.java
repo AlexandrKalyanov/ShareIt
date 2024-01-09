@@ -9,7 +9,7 @@ import java.util.List;
 public interface ItemStorage {
 
 
-    Item create(long userId,ItemCreateDto item);
+    Item create(long userId, ItemCreateDto item);
 
     Item findByIdWithUser(long itemId, long userId);
 
