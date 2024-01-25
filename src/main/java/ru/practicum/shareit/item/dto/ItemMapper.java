@@ -1,23 +1,19 @@
 package ru.practicum.shareit.item.dto;
 
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 public class ItemMapper {
-    public static ItemCreateDto toItemDto(Item item) {
-        return new ItemCreateDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable());
+    public static ItemCreateDto toItemDto(Item item, BookingForItemDto last, BookingForItemDto next) {
+        return new ItemCreateDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),last,next);
     }
 
-    public static Item toItem(long itemId, ItemCreateDto itemCreateDto, long userId) {
+    public static Item toItem(ItemCreateDto itemCreateDto) {
         return Item.builder()
-                .id(itemId)
                 .name(itemCreateDto.getName())
                 .description(itemCreateDto.getDescription())
                 .available(itemCreateDto.getAvailable())
-                .owner(userId)
                 .build();
     }
 

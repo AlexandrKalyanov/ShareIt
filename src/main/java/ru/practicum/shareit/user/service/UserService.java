@@ -11,9 +11,9 @@ public interface UserService {
 
     UserDto update(long userId, UserDto user);
 
-    User findById(long userId);
+    UserDto findById(long userId);
 
-    Collection<User> findAll();
+    Collection<UserDto> findAll();
 
     void deleteById(long userId);
 }

@@ -54,7 +54,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public List<ItemCreateDto> searchItems(@NotNull @RequestHeader(HEADER_USER) long userId,
+    public List<ItemUpdateDto> searchItems(@NotNull @RequestHeader(HEADER_USER) long userId,
                                            @NotNull @RequestParam String text) {
         log.info("Income GET request (search items): user id: {}, text: {}", userId, text);
         return itemService.searchItems(userId, text);

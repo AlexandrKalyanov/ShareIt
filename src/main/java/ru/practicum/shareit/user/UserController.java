@@ -2,6 +2,7 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -18,6 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public UserDto create(@Validated(BasicInfo.class) @RequestBody UserDto user) {
         log.info("Create user: {}", user);
         return userService.create(user);
@@ -30,13 +32,13 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public User findById(@PathVariable long userId) {
+    public UserDto findById(@PathVariable long userId) {
         log.info("Find user: {}", userId);
         return userService.findById(userId);
     }
 
     @GetMapping
-    public Collection<User> findAll() {
+    public Collection<UserDto> findAll() {
         log.info("Find all users");
         return userService.findAll();
     }

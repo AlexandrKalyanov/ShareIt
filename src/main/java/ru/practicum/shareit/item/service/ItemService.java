@@ -14,5 +14,5 @@ public interface ItemService {
 
     List<ItemCreateDto> findAllByUser(long userId);
 
-    List<ItemCreateDto> searchItems(long userId, String text);
+    List<ItemUpdateDto> searchItems(long userId, String text);
 }
