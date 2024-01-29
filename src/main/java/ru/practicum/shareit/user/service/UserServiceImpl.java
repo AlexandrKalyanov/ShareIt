@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
 
-
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -32,10 +31,10 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
         String name = userDto.getName();
         String email = userDto.getEmail();
-        if (name != null){
+        if (name != null) {
             user.setName(name);
         }
-        if (email != null){
+        if (email != null) {
             user.setEmail(email);
         }
 
