@@ -1,12 +1,14 @@
 package ru.practicum.shareit.item.dto;
 
-import ru.practicum.shareit.booking.Booking;
+
 import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.Collection;
+
 public class ItemMapper {
-    public static ItemCreateDto toItemDto(Item item, BookingForItemDto last, BookingForItemDto next) {
-        return new ItemCreateDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),last,next);
+    public static ItemCreateDto toItemDto(Item item, BookingForItemDto last, BookingForItemDto next, Collection<CommentDTO> comments) {
+        return new ItemCreateDto(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),last,next,comments);
     }
 
     public static Item toItem(ItemCreateDto itemCreateDto) {

@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidateException;
 import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
@@ -28,7 +27,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto create(long userId, BookingDto bookingDto) {
         User booker = getUser(userId);
         Item item = getItem(bookingDto);
-        if (!item.getAvailable()){
+        if (!item.getAvailable()) {
             throw new ValidationException("Вещь не доступна для бронирования");
         }
         if (item.getOwner().equals(booker.getId())) {
@@ -53,17 +52,16 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public BookingDto approve(long userId, long bookingId, boolean approved) {
         getUser(userId);
-        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() ->new ObjectNotFoundException("booking not found"));
-        if (!booking.getItem().getOwner().equals(userId)){
+        Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ObjectNotFoundException("booking not found"));
+        if (!booking.getItem().getOwner().equals(userId)) {
             throw new ObjectNotFoundException("Вы не можете подтверждать чужую вещь");
         }
-        if (booking.getStatus().equals(BookingStatus.APPROVED)){
+        if (booking.getStatus().equals(BookingStatus.APPROVED)) {
             throw new ValidationException("Бронирование уже подтверждено");
         }
-        if (approved){
+        if (approved) {
             booking.setStatus(BookingStatus.APPROVED);
-        }
-        else booking.setStatus(BookingStatus.REJECTED);
+        } else booking.setStatus(BookingStatus.REJECTED);
         bookingRepository.save(booking);
         return bookingMapper.toBookingDto(booking);
     }
@@ -77,7 +75,7 @@ public class BookingServiceImpl implements BookingService {
                 throw new ObjectNotFoundException("Только владлец или создатель запроса может посмотреть запрос");
             }
         }
-        return bookingMapper.toBookingDto(bookingRepository.findById(bookingId).get());
+        return bookingMapper.toBookingDto(booking);
 
     }
 
@@ -151,7 +149,7 @@ public class BookingServiceImpl implements BookingService {
                 break;
 
             default:
-                throw new ValidationException(String.format("Unknown state: %s",state));
+                throw new ValidationException(String.format("Unknown state: %s", state));
         }
         return bookings.stream().map(bookingMapper::toBookingDto).collect(Collectors.toList());
 

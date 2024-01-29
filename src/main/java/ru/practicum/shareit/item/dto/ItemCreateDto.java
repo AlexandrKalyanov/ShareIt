@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingForItemDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Collection;
 
 
 @Data
@@ -20,6 +21,8 @@ public class ItemCreateDto {
     private Boolean available;
     private BookingForItemDto lastBooking;
     private BookingForItemDto nextBooking;
+
+    private Collection<CommentDTO> comments;
 
 
 

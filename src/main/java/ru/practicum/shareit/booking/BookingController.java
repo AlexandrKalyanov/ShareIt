@@ -38,21 +38,21 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto findById(@NotNull @RequestHeader(HEADER_USER) long userId,
                                @NotNull @PathVariable() long bookingId) {
-        log.info("Input GET bookingId: {}, userId: {}", bookingId,userId);
+        log.info("Input GET bookingId: {}, userId: {}", bookingId, userId);
         return this.bookingService.findById(userId, bookingId);
     }
 
     @GetMapping
     public Collection<BookingDto> findAllByBooker(@NotNull @RequestHeader(HEADER_USER) long userId,
                                                   @RequestParam(required = false, defaultValue = "ALL") String state) {
-        log.info("Income GET bookings userID:{} state:{},",userId,state);
+        log.info("Income GET bookings userID:{} state:{},", userId, state);
         return this.bookingService.findAllByBooker(userId, state);
     }
 
     @GetMapping("/owner")
     public Collection<BookingDto> getAllForOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
                                                  @RequestParam(required = false, defaultValue = "ALL") String state) {
-        log.info("Income GET bookings ownerID:{} state:{},",ownerId,state);
+        log.info("Income GET bookings ownerID:{} state:{},", ownerId, state);
         return bookingService.findAllForOwner(ownerId, state);
     }
 
