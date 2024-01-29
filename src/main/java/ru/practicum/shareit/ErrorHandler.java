@@ -34,6 +34,7 @@ public class ErrorHandler {
     public Map<String, String> handleObjectNotFoundException(final ObjectNotFoundException e) {
         return Map.of("Error message", e.getMessage());
     }
+
     @ExceptionHandler(ValidationException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody

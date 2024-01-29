@@ -65,11 +65,10 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public CommentDTO createComment(@NotNull @RequestHeader(HEADER_USER) long userId,
                                     @NotNull @PathVariable long itemId,
-                                    @Valid @RequestBody CommentDTOShort commentDTOshort){
-        log.info("Income POST request to create comment user ID: {}, itemID: {}, Comment: {}",userId,itemId,commentDTOshort);
-        return itemService.createComment(userId,itemId,commentDTOshort);
+                                    @Valid @RequestBody CommentDTOShort commentDTOshort) {
+        log.info("Income POST request to create comment user ID: {}, itemID: {}, Comment: {}", userId, itemId, commentDTOshort);
+        return itemService.createComment(userId, itemId, commentDTOshort);
     }
-
 
 
 }
