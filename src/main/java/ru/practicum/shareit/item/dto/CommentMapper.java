@@ -1,8 +1,10 @@
 package ru.practicum.shareit.item.dto;
 
+import lombok.experimental.UtilityClass;
 import ru.practicum.shareit.item.comment.Comment;
 
-public class CommentMapper {
+@UtilityClass
+public final class CommentMapper {
     public static CommentDTO toCommentDto(Comment comment) {
         return CommentDTO.builder()
                 .authorName(comment.getAuthor().getName())

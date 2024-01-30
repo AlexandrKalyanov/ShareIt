@@ -1,4 +1,4 @@
 package ru.practicum.shareit.user;
 
-public interface BasicInfo {
+public interface Create {
 }

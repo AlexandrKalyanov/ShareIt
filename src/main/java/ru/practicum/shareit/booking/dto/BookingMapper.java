@@ -8,11 +8,5 @@ import ru.practicum.shareit.booking.Booking;
 public interface BookingMapper {
 
     @Mapping(target = "itemId", ignore = true)
-    BookingDto toBookingDto(Booking booking);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "item", ignore = true)
-    @Mapping(target = "booker", ignore = true)
-    Booking toBooking(BookingDto bookingDto);
-
+    BookingDtoResponse toBookingDtoResponse(Booking booking);
 }

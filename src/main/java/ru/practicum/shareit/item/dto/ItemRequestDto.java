@@ -1,24 +1,23 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.item.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.Create;
+import ru.practicum.shareit.item.dto.valiadateGroup.Create;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+
 @Data
-@Builder
 @AllArgsConstructor
-public class UserDto {
-    private Long id;
+public class ItemRequestDto {
     @NotBlank(groups = Create.class)
     @Size(max = 255)
     private String name;
     @NotBlank(groups = Create.class)
-    @Email(groups = Create.class)
     @Size(max = 512)
-    private String email;
+    private String description;
+    @NotNull(groups = Create.class)
+    private Boolean available;
 }

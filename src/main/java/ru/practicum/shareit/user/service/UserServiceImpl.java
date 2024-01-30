@@ -32,14 +32,15 @@ public class UserServiceImpl implements UserService {
         String name = userDto.getName();
         String email = userDto.getEmail();
         if (name != null) {
-            user.setName(name);
+            if (!name.isBlank()) {
+                user.setName(name);
+            }
         }
         if (email != null) {
-            user.setEmail(email);
+            if (!email.isBlank()) {
+                user.setEmail(email);
+            }
         }
-
-
-        user.setId(userId);
         return UserMapper.toUserDto(userRepository.save(user));
     }
 
@@ -56,7 +57,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void deleteById(long userId) {
-        //userStorage.deleteById(userId);
         userRepository.deleteById(userId);
     }
 }

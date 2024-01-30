@@ -16,7 +16,6 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,68 +31,53 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
 
     @Override
-    public ItemCreateDto create(long userId, ItemCreateDto itemCreateDto) {
-        userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
-        Item item = ItemMapper.toItem(itemCreateDto);
-        item.setOwner(userId);
-        return ItemMapper.toItemDto(itemRepository.save(item), null, null, null);
+    public ItemResponseDto create(long userId, ItemRequestDto itemRequestDto) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        Item item = ItemMapper.toItem(itemRequestDto);
+        item.setOwner(user);
+        return ItemMapper.toItemResponseDto(itemRepository.save(item), null, null, null);
 
     }
 
     @Override
-    public ItemUpdateDto update(long userId, ItemUpdateDto itemUpdateDto, long itemId) {
-        /*
-          Проверяем есть ли такой поьзователь в системе
-         */
+    public ItemResponseDto update(long userId, ItemRequestDto itemRequestDto, long itemId) {
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
-        /*
-          Находим предмет, который хотим изменить
-         */
-        //Item item = itemStorage.findByIdWithUser(itemId, userId);
         Item item = itemRepository.findByIdWithUser(itemId, userId).orElseThrow(() -> new ObjectNotFoundException("Item not found"));
-         /*
-          Обновляем поля, которые не null
-         */
-        updateItem(item, itemUpdateDto);
-         /*
-         Сохраняем измения
-         */
-        //itemStorage.update(item);
+        updateItem(item, itemRequestDto);
         itemRepository.save(item);
-
         return ItemMapper.itemToItemUpdateDto(item);
     }
 
     @Override
-    public ItemCreateDto findByItemId(long userId, long itemId) {
+    public ItemResponseDto findByItemId(long userId, long itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Item not found"));
         BookingForItemDto lastBooking = findLastOwnerBooking(itemId, userId, LocalDateTime.now());
         BookingForItemDto nextBooking = findNextOwnerBooking(itemId, userId, LocalDateTime.now());
         Collection<CommentDTO> commentByItem = commentRepository.findCommentByItem(itemId).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
-        ItemCreateDto itemCreateDto = ItemMapper.toItemDto(item, lastBooking, nextBooking, commentByItem);
-        log.debug("responce DTO ->{}", itemCreateDto);
-        return itemCreateDto;
+        ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, commentByItem);
+        log.debug("responce DTO ->{}", itemResponseDto);
+        return itemResponseDto;
     }
 
     @Override
-    public List<ItemCreateDto> findAllByUser(long userId) {
+    public List<ItemResponseDto> findAllByUser(long userId) {
         List<Item> itemsByUser = itemRepository.findAllByUser(userId);
-        List<ItemCreateDto> responseList = new ArrayList<>();
+        List<ItemResponseDto> responseList = new ArrayList<>();
         for (Item item : itemsByUser) {
             List<CommentDTO> listComments = commentRepository.findCommentByItem(item.getId()).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
             BookingForItemDto lastBooking = findLastOwnerBooking(item.getId(), userId, LocalDateTime.now());
             BookingForItemDto nextBooking = findNextOwnerBooking(item.getId(), userId, LocalDateTime.now());
-            ItemCreateDto itemCreateDto = ItemMapper.toItemDto(item, lastBooking, nextBooking, listComments);
-            responseList.add(itemCreateDto);
+            ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, listComments);
+            responseList.add(itemResponseDto);
         }
-        return responseList.stream().sorted(Comparator.comparing(ItemCreateDto::getId)).collect(Collectors.toList());
+        return responseList.stream().sorted(Comparator.comparing(ItemResponseDto::getId)).collect(Collectors.toList());
     }
 
     @Override
-    public List<ItemUpdateDto> searchItems(long userId, String text) {
+    public List<ItemResponseDto> searchItems(long userId, String text) {
         String textLowRegist = text.toLowerCase();
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
-        if (text.isBlank() || text.isEmpty()) {
+        if (text.isBlank()) {
             return Collections.emptyList();
         }
         return itemRepository.searchItems(textLowRegist).stream()
@@ -113,15 +97,15 @@ public class ItemServiceImpl implements ItemService {
         return CommentMapper.toCommentDto(comment);
     }
 
-    private void updateItem(Item item, ItemUpdateDto itemUpdateDto) {
-        if (itemUpdateDto.getAvailable() != null) {
-            item.setAvailable(itemUpdateDto.getAvailable());
+    private void updateItem(Item item, ItemRequestDto itemRequestDto) {
+        if (itemRequestDto.getAvailable() != null) {
+            item.setAvailable(itemRequestDto.getAvailable());
         }
-        if (itemUpdateDto.getName() != null) {
-            item.setName(itemUpdateDto.getName());
+        if (itemRequestDto.getName() != null) {
+            item.setName(itemRequestDto.getName());
         }
-        if (itemUpdateDto.getDescription() != null) {
-            item.setDescription(itemUpdateDto.getDescription());
+        if (itemRequestDto.getDescription() != null) {
+            item.setDescription(itemRequestDto.getDescription());
         }
     }
 
