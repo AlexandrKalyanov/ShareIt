@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import ru.practicum.shareit.item.dto.valiadateGroup.Create;
+import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ public class ItemRequestDto {
     @Size(max = 255)
     private String name;
     @NotBlank(groups = Create.class)
-    @Size(max = 512)
+    @Size(max = 512, groups = {Create.class, Update.class})
     private String description;
     @NotNull(groups = Create.class)
     private Boolean available;

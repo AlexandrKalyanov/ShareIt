@@ -9,6 +9,7 @@ import ru.practicum.shareit.item.dto.CommentDTOShort;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.dto.valiadateGroup.Create;
+import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
@@ -35,7 +36,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemResponseDto update(@RequestHeader(HEADER_USER) long userId,
-                                  @Valid @RequestBody ItemRequestDto itemRequestDto,
+                                  @Validated(Update.class) @RequestBody ItemRequestDto itemRequestDto,
                                   @PathVariable long itemId) {
         log.info("Income PATCH request DTO: {}, user ID: {}, item ID: {}", itemRequestDto, userId, itemId);
         return itemService.update(userId, itemRequestDto, itemId);

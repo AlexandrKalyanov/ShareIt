@@ -5,7 +5,7 @@ import ru.practicum.shareit.item.comment.Comment;
 
 @UtilityClass
 public final class CommentMapper {
-    public static CommentDTO toCommentDto(Comment comment) {
+    public CommentDTO toCommentDto(Comment comment) {
         return CommentDTO.builder()
                 .authorName(comment.getAuthor().getName())
                 .text(comment.getText())

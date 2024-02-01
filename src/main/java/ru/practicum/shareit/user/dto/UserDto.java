@@ -3,6 +3,7 @@ package ru.practicum.shareit.user.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 import ru.practicum.shareit.user.Create;
 
 import javax.validation.constraints.Email;
@@ -15,10 +16,10 @@ import javax.validation.constraints.Size;
 public class UserDto {
     private Long id;
     @NotBlank(groups = Create.class)
-    @Size(max = 255)
+    @Size(max = 255, groups = {Create.class, Update.class})
     private String name;
     @NotBlank(groups = Create.class)
-    @Email(groups = Create.class)
-    @Size(max = 512)
+    @Email(groups = {Create.class, Update.class})
+    @Size(max = 512, groups = {Create.class, Update.class})
     private String email;
 }

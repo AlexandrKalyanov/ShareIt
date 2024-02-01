@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -25,7 +26,7 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable long userId, @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable long userId, @Validated(Update.class) @RequestBody UserDto userDto) {
         log.info("Update user id: {}, user: {} ", userId, userDto);
         return userService.update(userId, userDto);
     }

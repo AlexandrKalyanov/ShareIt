@@ -6,6 +6,7 @@ import ru.practicum.shareit.booking.dto.BookingForItemDto;
 
 import java.util.Collection;
 
+
 @Data
 @Builder
 public class ItemResponseDto {

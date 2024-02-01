@@ -64,23 +64,35 @@ public class ItemServiceImpl implements ItemService {
         List<Item> itemsByUser = itemRepository.findAllByUser(userId);
         List<ItemResponseDto> responseList = new ArrayList<>();
         for (Item item : itemsByUser) {
-            List<CommentDTO> listComments = commentRepository.findCommentByItem(item.getId()).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
             BookingForItemDto lastBooking = findLastOwnerBooking(item.getId(), userId, LocalDateTime.now());
             BookingForItemDto nextBooking = findNextOwnerBooking(item.getId(), userId, LocalDateTime.now());
-            ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, listComments);
+            ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, Collections.emptyList());
             responseList.add(itemResponseDto);
         }
-        return responseList.stream().sorted(Comparator.comparing(ItemResponseDto::getId)).collect(Collectors.toList());
+        Map<Long, ArrayList<Comment>> collect = commentRepository.findAllCommentsInListItemsIds(itemsByUser.stream().map(Item::getId).collect(Collectors.toList()))
+                .stream()
+                .collect(Collectors.groupingBy(comment -> comment.getItem().getId(), Collectors.toCollection(ArrayList::new)));
+
+        for (ItemResponseDto itemResponseDto : responseList) {
+            Long itemResponseDtoId = itemResponseDto.getId();
+            if (collect.containsKey(itemResponseDtoId)) {
+                List<CommentDTO> comments = collect.get(itemResponseDtoId).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+                itemResponseDto.setComments(comments);
+            }
+        }
+        responseList.sort(Comparator.comparing(ItemResponseDto::getId));
+
+        return responseList;
     }
 
     @Override
     public List<ItemResponseDto> searchItems(long userId, String text) {
-        String textLowRegist = text.toLowerCase();
+        String textLowRegister = text.toLowerCase();
         userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        return itemRepository.searchItems(textLowRegist).stream()
+        return itemRepository.searchItems(textLowRegister).stream()
                 .map(ItemMapper::itemToItemUpdateDto)
                 .collect(Collectors.toList());
     }
@@ -89,8 +101,8 @@ public class ItemServiceImpl implements ItemService {
     public CommentDTO createComment(long userId, long itemId, CommentDTOShort commentDTOshort) {
         User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
         Item item = itemRepository.findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Item not found"));
-        Collection<Booking> bookings = bookingRepository.findBookings(itemId, userId, LocalDateTime.now());
-        if (bookings.isEmpty()) {
+        Boolean isBookings = bookingRepository.findBookings(itemId, userId, LocalDateTime.now());
+        if (!isBookings) {
             throw new ValidationException("Пользователь не может комментировать вещь");
         }
         Comment comment = commentRepository.save(new Comment(null, commentDTOshort.getText(), item, user, LocalDateTime.now()));
@@ -101,10 +113,10 @@ public class ItemServiceImpl implements ItemService {
         if (itemRequestDto.getAvailable() != null) {
             item.setAvailable(itemRequestDto.getAvailable());
         }
-        if (itemRequestDto.getName() != null) {
+        if (itemRequestDto.getName() != null && !itemRequestDto.getName().isBlank()) {
             item.setName(itemRequestDto.getName());
         }
-        if (itemRequestDto.getDescription() != null) {
+        if (itemRequestDto.getDescription() != null && !itemRequestDto.getDescription().isBlank()) {
             item.setDescription(itemRequestDto.getDescription());
         }
     }
