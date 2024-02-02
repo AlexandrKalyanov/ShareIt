@@ -43,11 +43,12 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Query(value = "select i from Booking i where i.item.id =?1 and i.item.owner.id = ?2 and i.start > ?3 and i.status = 'APPROVED' order by i.start desc")
     Collection<Booking> findFutureOwnerBookings(long itemId, long ownerId, LocalDateTime now);
+
     @Query(value = "select i from Booking i where i.item.id in ?1 and i.item.owner.id = ?2 and i.start <= ?3  and i.status = 'APPROVED' order by i.start desc")
-    List<Booking> f1indPastOwnerBookings(List<Long> itemIds, long ownerId, LocalDateTime now);
+    List<Booking> findPastOwnerBookingsAllThings(List<Long> itemIds, long ownerId, LocalDateTime now);
 
     @Query(value = "select i from Booking i where i.item.id in ?1 and i.item.owner.id = ?2 and i.start > ?3 and i.status = 'APPROVED' order by i.start desc")
-    List<Booking> f1indFutureOwnerBookings(List<Long> itemIds, long ownerId, LocalDateTime now);
+    List<Booking> findFutureOwnerBookingsAllThings(List<Long> itemIds, long ownerId, LocalDateTime now);
 
     @Query(value = "select count(i) > 0 from Booking i where i.item.id =?1 and i.booker.id = ?2 and i.end < ?3 and i.status = 'APPROVED'")
     Boolean findBookings(long itemId, long bookerId, LocalDateTime now);

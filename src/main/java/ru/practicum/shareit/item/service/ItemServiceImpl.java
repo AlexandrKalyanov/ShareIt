@@ -61,8 +61,8 @@ public class ItemServiceImpl implements ItemService {
         List<ItemResponseDto> responseList = new ArrayList<>();
         List<Item> itemsByUser = itemRepository.findAllByUser(userId);
         List<Long> itemsIdsList = itemsByUser.stream().map(Item::getId).collect(Collectors.toList());
-        List<Booking> allBookingLast = bookingRepository.f1indPastOwnerBookings(itemsIdsList, userId, LocalDateTime.now());
-        List<Booking> allBookingNext = bookingRepository.f1indFutureOwnerBookings(itemsIdsList, userId, LocalDateTime.now());
+        List<Booking> allBookingLast = bookingRepository.findPastOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now());
+        List<Booking> allBookingNext = bookingRepository.findFutureOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now());
 
         for (Item item : itemsByUser) {
             BookingForItemDto lastBooking = allBookingLast.stream()
