@@ -78,16 +78,14 @@ public class ItemServiceImpl implements ItemService {
             ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, Collections.emptyList());
             responseList.add(itemResponseDto);
         }
-        Map<Long, ArrayList<Comment>> collect = commentRepository.findAllCommentsInListItemsIds(itemsByUser.stream().map(Item::getId).collect(Collectors.toList()))
+        Map<Long, List<Comment>> collect = commentRepository.findAllCommentsInListItemsIds(itemsByUser.stream().map(Item::getId).collect(Collectors.toList()))
                 .stream()
                 .collect(Collectors.groupingBy(comment -> comment.getItem().getId(), Collectors.toCollection(ArrayList::new)));
 
         for (ItemResponseDto itemResponseDto : responseList) {
             Long itemResponseDtoId = itemResponseDto.getId();
-            if (collect.containsKey(itemResponseDtoId)) {
-                List<CommentDTO> comments = collect.get(itemResponseDtoId).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
-                itemResponseDto.setComments(comments);
-            }
+            List<CommentDTO> comments = collect.getOrDefault(itemResponseDtoId, Collections.emptyList()).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
+            itemResponseDto.setComments(comments);
         }
         return responseList;
     }
