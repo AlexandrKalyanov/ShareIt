@@ -13,7 +13,7 @@ import ru.practicum.shareit.item.storage.ItemRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import javax.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
@@ -29,8 +29,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse create(long userId, BookingDtoRequest bookingDtoRequest) {
-        User booker = getUser(userId);
-        Item item = getItem(bookingDtoRequest.getItemId());
+        User booker = userRepository.getUserOrException(userId);
+        Item item = itemRepository.getItemOrException(bookingDtoRequest.getItemId());
         if (!item.getAvailable()) {
             throw new ValidationException("Вещь не доступна для бронирования");
         }
@@ -45,7 +45,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse approve(long userId, long bookingId, boolean approved) {
-        getUser(userId);
+        userRepository.getUserOrException(userId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ObjectNotFoundException("booking not found"));
         if (!booking.getItem().getOwner().getId().equals(userId)) {
             throw new ObjectNotFoundException("Вы не можете подтверждать чужую вещь");
@@ -62,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingDtoResponse findById(long userId, long bookingId) {
-        getUser(userId);
+        userRepository.getUserOrException(userId);
         Booking booking = bookingRepository.findById(bookingId).orElseThrow(() -> new ObjectNotFoundException("booking not found"));
         if (!booking.getBooker().getId().equals(userId)) {
             if (!booking.getItem().getOwner().getId().equals(userId)) {
@@ -76,7 +76,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Collection<BookingDtoResponse> findAllByBooker(long userId, State state) {
         Collection<Booking> bookings;
-        getUser(userId);
+        userRepository.getUserOrException(userId);
         switch (state) {
             case ALL:
                 return bookingRepository.findAllByBookerIdOrderByStartDesc(userId).stream().map(bookingMapper::toBookingDtoResponse).collect(Collectors.toList());
@@ -109,8 +109,8 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public Collection<BookingDtoResponse> findAllForOwner(long ownerId, State state) {
-        getUser(ownerId);
-        if (itemRepository.findAllByUser(ownerId).isEmpty()) {
+        userRepository.getUserOrException(ownerId);
+        if (!itemRepository.existsByOwnerId(ownerId)) {
             return Collections.emptyList();
         }
         Collection<Booking> bookings;
@@ -147,14 +147,6 @@ public class BookingServiceImpl implements BookingService {
         }
         return bookings.stream().map(bookingMapper::toBookingDtoResponse).collect(Collectors.toList());
 
-    }
-
-    private User getUser(Long userId) {
-        return userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
-    }
-
-    private Item getItem(@NotNull Long itemID) {
-        return itemRepository.findById(itemID).orElseThrow(() -> new ObjectNotFoundException("Item not found"));
     }
 
     private Booking getBooking(BookingDtoRequest bookingDtoRequest, User booker, Item item) {
