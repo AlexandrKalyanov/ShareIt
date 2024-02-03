@@ -61,20 +61,37 @@ public class ItemServiceImpl implements ItemService {
         List<ItemResponseDto> responseList = new ArrayList<>();
         List<Item> itemsByUser = itemRepository.findAllByUser(userId);
         List<Long> itemsIdsList = itemsByUser.stream().map(Item::getId).collect(Collectors.toList());
-        List<Booking> allBookingLast = bookingRepository.findPastOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now());
-        List<Booking> allBookingNext = bookingRepository.findFutureOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now());
+        Map<Long, List<Booking>> allBookingMapLast = bookingRepository.findPastOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now())
+                .stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId(), Collectors.toList()));
+        Map<Long, List<Booking>> allBookingMapNext = bookingRepository.findFutureOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now())
+                .stream()
+                .collect(Collectors.groupingBy(booking -> booking.getItem().getId(), Collectors.toList()));
 
         for (Item item : itemsByUser) {
-            BookingForItemDto lastBooking = allBookingLast.stream()
-                    .filter(booking -> booking.getItem().getId().equals(item.getId()))
-                    .max(Comparator.comparing(Booking::getEnd))
-                    .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
-                    .orElse(null);
-            BookingForItemDto nextBooking = allBookingNext.stream()
-                    .filter(booking -> booking.getItem().getId().equals(item.getId()))
-                    .min(Comparator.comparing(Booking::getStart))
-                    .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
-                    .orElse(null);
+            BookingForItemDto lastBooking;
+            BookingForItemDto nextBooking;
+            if (allBookingMapLast.containsKey(item.getId())) {
+                lastBooking = allBookingMapLast.get(item.getId())
+                        .stream()
+                        .filter(booking -> booking.getItem().getId().equals(item.getId()))
+                        .max(Comparator.comparing(Booking::getEnd))
+                        .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
+                        .orElse(null);
+            } else {
+                lastBooking = null;
+            }
+            if (allBookingMapNext.containsKey(item.getId())) {
+                nextBooking = allBookingMapNext.get(item.getId())
+                        .stream()
+                        .filter(booking -> booking.getItem().getId().equals(item.getId()))
+                        .min(Comparator.comparing(Booking::getStart))
+                        .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
+                        .orElse(null);
+
+            } else {
+                nextBooking = null;
+            }
             ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, Collections.emptyList());
             responseList.add(itemResponseDto);
         }
