@@ -1,28 +1,36 @@
 package ru.practicum.shareit.item.dto;
 
+
+import lombok.experimental.UtilityClass;
+import ru.practicum.shareit.booking.dto.BookingForItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-public class ItemMapper {
-    public static ItemCreateDto toItemDto(Item item) {
-        return new ItemCreateDto(
-                item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable());
-    }
+import java.util.Collection;
 
-    public static Item toItem(long itemId, ItemCreateDto itemCreateDto, long userId) {
-        return Item.builder()
-                .id(itemId)
-                .name(itemCreateDto.getName())
-                .description(itemCreateDto.getDescription())
-                .available(itemCreateDto.getAvailable())
-                .owner(userId)
+@UtilityClass
+public final class ItemMapper {
+    public ItemResponseDto toItemResponseDto(Item item, BookingForItemDto last, BookingForItemDto next, Collection<CommentDTO> comments) {
+        return ItemResponseDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .lastBooking(last)
+                .nextBooking(next)
+                .comments(comments)
                 .build();
     }
 
-    public static ItemUpdateDto itemToItemUpdateDto(Item item) {
-        return ItemUpdateDto.builder()
+    public Item toItem(ItemRequestDto itemRequestDto) {
+        return Item.builder()
+                .name(itemRequestDto.getName())
+                .description(itemRequestDto.getDescription())
+                .available(itemRequestDto.getAvailable())
+                .build();
+    }
+
+    public ItemResponseDto itemToItemUpdateDto(Item item) {
+        return ItemResponseDto.builder()
                 .id(item.getId())
                 .description(item.getDescription())
                 .name(item.getName())

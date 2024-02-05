@@ -2,10 +2,11 @@ package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.service.UserService;
 
 import java.util.Collection;
@@ -18,25 +19,26 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserDto create(@Validated(BasicInfo.class) @RequestBody UserDto user) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public UserDto create(@Validated(Create.class) @RequestBody UserDto user) {
         log.info("Create user: {}", user);
         return userService.create(user);
     }
 
     @PatchMapping("/{userId}")
-    public UserDto update(@PathVariable long userId, @RequestBody UserDto userDto) {
+    public UserDto update(@PathVariable long userId, @Validated(Update.class) @RequestBody UserDto userDto) {
         log.info("Update user id: {}, user: {} ", userId, userDto);
         return userService.update(userId, userDto);
     }
 
     @GetMapping("/{userId}")
-    public User findById(@PathVariable long userId) {
+    public UserDto findById(@PathVariable long userId) {
         log.info("Find user: {}", userId);
         return userService.findById(userId);
     }
 
     @GetMapping
-    public Collection<User> findAll() {
+    public Collection<UserDto> findAll() {
         log.info("Find all users");
         return userService.findAll();
     }
