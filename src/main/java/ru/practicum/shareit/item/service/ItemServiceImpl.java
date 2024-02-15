@@ -12,6 +12,8 @@ import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.storage.ItemRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
@@ -28,14 +30,26 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final RequestRepository requestRepository;
 
     @Override
     public ItemResponseDto create(long userId, ItemRequestDto itemRequestDto) {
         User user = userRepository.getUserOrException(userId);
-        Item item = ItemMapper.toItem(itemRequestDto);
+        ItemRequest itemRequest = null;
+        if (itemRequestDto.getRequestId() != null) {
+            Optional<ItemRequest> request = requestRepository.findById(itemRequestDto.getRequestId());
+            if (request.isEmpty()) {
+                throw new ObjectNotFoundException("Request id not found");
+            }
+            itemRequest = request.get();
+        }
+        Item item = ItemMapper.toItem(itemRequestDto, itemRequest);
         item.setOwner(user);
-        return ItemMapper.toItemResponseDto(itemRepository.save(item), null, null, null);
-
+        ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(itemRepository.save(item), null, null, null);
+        if (item.getRequest() == null) {
+            itemResponseDto.setRequestId(null);
+        } else itemResponseDto.setRequestId(item.getRequest().getId());
+        return itemResponseDto;
     }
 
     @Override

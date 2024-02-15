@@ -20,6 +20,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "select i from Item i where (lower(i.description) like %:text% or lower(i.name) like %:text%) and i.available = true")
     List<Item> searchItems(String text);
+    @Query(value = "select i from Item i where i.request.id in ?1")
+    List<Item> searchByRequestIds(List<Long> listRequestsIds);
 
     default Item getItemOrException(Long itemId) {
         return findById(itemId).orElseThrow(() -> new ObjectNotFoundException("Item not found"));
