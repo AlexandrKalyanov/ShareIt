@@ -14,8 +14,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query(value = "select i from Item i where i.id =?1 and i.owner.id =?2")
     Optional<Item> findByIdWithUser(long itemId, long userId);
 
-    //@Query(value = "select i from Item i where i.owner.id =?1 order by i.id asc")
-    @Query(value = "SELECT * FROM ITEMS WHERE ITEMS.OWNER_ID = ?1 ORDER BY ID ASC",
+    @Query(value = "SELECT * FROM ITEMS WHERE ITEMS.OWNER_ID = ?1 ORDER BY ID ",
             countQuery = "SELECT count(*) FROM ITEMS WHERE OWNER_ID = ?1",
             nativeQuery = true)
     List<Item> findAllByUser(long userId, PageRequest pageRequest);
@@ -24,7 +23,8 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "select i from Item i where (lower(i.description) like %:text% or lower(i.name) like %:text%) and i.available = true",
             countQuery = "select count(i) from Item i where (lower(i.description) like %:text% or lower(i.name) like %:text%) and i.available = true")
-    List<Item> searchItems(String text,PageRequest pageRequest);
+    List<Item> searchItems(String text, PageRequest pageRequest);
+
     @Query(value = "select i from Item i where i.request.id in ?1")
     List<Item> searchByRequestIds(List<Long> listRequestsIds);
 
