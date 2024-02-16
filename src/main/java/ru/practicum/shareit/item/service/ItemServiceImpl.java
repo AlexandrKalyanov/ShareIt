@@ -1,6 +1,7 @@
 package ru.practicum.shareit.item.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -71,9 +72,10 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> findAllByUser(long userId) {
+    public List<ItemResponseDto> findAllByUser(long userId, int from, int size) {
         List<ItemResponseDto> responseList = new ArrayList<>();
-        List<Item> itemsByUser = itemRepository.findAllByUser(userId);
+        PageRequest pageRequest = PageRequest.of(from/size,size);
+        List<Item> itemsByUser = itemRepository.findAllByUser(userId,pageRequest);
         List<Long> itemsIdsList = itemsByUser.stream().map(Item::getId).collect(Collectors.toList());
         Map<Long, List<Booking>> allBookingMapLast = bookingRepository.findPastOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now())
                 .stream()
@@ -122,13 +124,14 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemResponseDto> searchItems(long userId, String text) {
+    public List<ItemResponseDto> searchItems(long userId, String text, int from, int size) {
         String textLowRegister = text.toLowerCase();
         userRepository.getUserOrException(userId);
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        return itemRepository.searchItems(textLowRegister).stream()
+        PageRequest pageRequest = PageRequest.of(from/size,size);
+        return itemRepository.searchItems(textLowRegister,pageRequest).stream()
                 .map(ItemMapper::itemToItemUpdateDto)
                 .collect(Collectors.toList());
     }

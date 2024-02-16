@@ -5,7 +5,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidationException;
 import ru.practicum.shareit.item.dto.ItemForRequest;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -31,7 +30,11 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public ItemRequestOutcomeDto create(long userId, ItemRequestIncomeDto itemRequestIncomeDto) {
         User user = userRepository.getUserOrException(userId);
-        ItemRequest itemRequest = ItemRequest.builder().requester(user).created(LocalDateTime.now()).description(itemRequestIncomeDto.getDescription()).build();
+        ItemRequest itemRequest = ItemRequest.builder()
+                .requester(user)
+                .created(LocalDateTime.now())
+                .description(itemRequestIncomeDto.getDescription())
+                .build();
         return ItemRequestMapper.toItemRequestOutcomeDto(requestRepository.save(itemRequest));
     }
 
@@ -41,10 +44,16 @@ public class RequestServiceImpl implements RequestService {
 
         List<ItemRequest> allByRequesterId = requestRepository.findAllByRequester_Id(userId);
 
-        List<Long> requestsIds = allByRequesterId.stream().map(ItemRequest::getId).collect(Collectors.toList());
+        List<Long> requestsIds = allByRequesterId
+                .stream()
+                .map(ItemRequest::getId)
+                .collect(Collectors.toList());
         List<Item> items = itemRepository.searchByRequestIds(requestsIds);
         if (items.isEmpty()) {
-            List<ItemRequestOutcomeDto> list = allByRequesterId.stream().map(ItemRequestMapper::toItemRequestOutcomeDto).collect(Collectors.toList());
+            List<ItemRequestOutcomeDto> list = allByRequesterId
+                    .stream()
+                    .map(ItemRequestMapper::toItemRequestOutcomeDto)
+                    .collect(Collectors.toList());
             for (ItemRequestOutcomeDto itemRequestOutcomeDto : list) {
                 itemRequestOutcomeDto.setItems(Collections.emptyList());
             }
@@ -56,7 +65,8 @@ public class RequestServiceImpl implements RequestService {
                 .map(ItemMapper::toItemForRequest)
                 .collect(Collectors.toList());
 
-        List<ItemRequestOutcomeDto> itemRequestOutcomeDtos = allByRequesterId.stream()
+        List<ItemRequestOutcomeDto> itemRequestOutcomeDtos = allByRequesterId
+                .stream()
                 .map(ItemRequestMapper::toItemRequestOutcomeDto)
                 .collect(Collectors.toList());
         for (ItemRequestOutcomeDto itemRequestOutcomeDto : itemRequestOutcomeDtos) {
@@ -67,35 +77,25 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public List<ItemRequestOutcomeDto> findAll(long userId, int from, int size) {
-        //Валидаци параметров from и size
-        if (from < 0 || size < 0) {
-            throw new ValidationException("Params must be positive");
-        }
-        //Проверяем есть ли такой пользователь в системе
         userRepository.getUserOrException(userId);
-        //Пагинация
-        PageRequest pageRequest = PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "created"));
-        // Получил из базы все реквесты
-        List<ItemRequestOutcomeDto> itemRequestOutcomeDtos = requestRepository.findAllWithPage(userId, pageRequest).stream()
+        PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"));
+        List<ItemRequestOutcomeDto> itemRequestOutcomeDtos = requestRepository.findAllWithPage(userId, pageRequest)
+                .stream()
                 .map(ItemRequestMapper::toItemRequestOutcomeDto)
                 .collect(Collectors.toList());
-        //Получаю все ids реквестов
-        List<Long> itemRequestIds = itemRequestOutcomeDtos.stream()
+        List<Long> itemRequestIds = itemRequestOutcomeDtos
+                .stream()
                 .map(ItemRequestOutcomeDto::getId)
                 .collect(Collectors.toList());
-
         List<Item> itemList = itemRepository.searchByRequestIds(itemRequestIds);
-
         if (itemList == null) {
             itemRequestOutcomeDtos.forEach(itemRequestOutcomeDto -> itemRequestOutcomeDto.setItems(Collections.emptyList()));
             return itemRequestOutcomeDtos;
         }
-
         List<ItemForRequest> itemResponseDtos = new ArrayList<>();
         for (Item item : itemList) {
             itemResponseDtos.add(ItemRequestMapper.toItemForRequest(item));
         }
-
         for (ItemRequestOutcomeDto itemRequestOutcomeDto : itemRequestOutcomeDtos) {
             Collection<ItemForRequest> itemForRequestsList = new ArrayList<>();
             for (ItemForRequest itemForRequest : itemResponseDtos) {

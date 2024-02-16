@@ -13,6 +13,7 @@ import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 import static ru.practicum.shareit.GlobalConst.HEADER_USER;
@@ -21,6 +22,7 @@ import static ru.practicum.shareit.GlobalConst.HEADER_USER;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
+@Validated
 @RequestMapping("/items")
 public class ItemController {
 
@@ -51,16 +53,20 @@ public class ItemController {
     }
 
     @GetMapping
-    public List<ItemResponseDto> findAllByUser(@RequestHeader(HEADER_USER) long userId) {
+    public List<ItemResponseDto> findAllByUser(@RequestHeader(HEADER_USER) long userId,
+                                               @Valid @RequestParam(defaultValue = "0") @Min(0) int from,
+                                               @Valid @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET request (find all by user): user ID {}", userId);
-        return itemService.findAllByUser(userId);
+        return itemService.findAllByUser(userId, from, size);
     }
 
     @GetMapping("/search")
     public List<ItemResponseDto> searchItems(@RequestHeader(HEADER_USER) long userId,
-                                             @RequestParam String text) {
+                                             @RequestParam String text,
+                                             @Valid @RequestParam(defaultValue = "0") @Min(0) int from,
+                                             @Valid @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET request (search items): user id: {}, text: {}", userId, text);
-        return itemService.searchItems(userId, text);
+        return itemService.searchItems(userId, text, from, size);
     }
 
     @PostMapping("/{itemId}/comment")

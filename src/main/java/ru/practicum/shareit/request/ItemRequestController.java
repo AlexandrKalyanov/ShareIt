@@ -2,11 +2,13 @@ package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestIncomeDto;
 import ru.practicum.shareit.request.dto.ItemRequestOutcomeDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.util.Collection;
 
 
@@ -14,6 +16,7 @@ import static ru.practicum.shareit.GlobalConst.HEADER_USER;
 
 @Slf4j
 @RequiredArgsConstructor
+@Validated
 @RestController
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
@@ -34,13 +37,16 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public Collection<ItemRequestOutcomeDto> findAll(@RequestHeader(HEADER_USER) long userId,
-                                               @RequestParam(defaultValue = "0") int from,
-                                               @RequestParam(defaultValue = "10")  int size) {
-        return requestService.findAll(userId,from,size);
+                                                     @Valid @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                     @Valid @RequestParam(defaultValue = "10") @Min(0) int size) {
+        log.info("Income GET/all item request by User: {}", userId);
+        return requestService.findAll(userId, from, size);
     }
+
     @GetMapping("/{requestId}")
     public ItemRequestOutcomeDto findRequest(@RequestHeader(HEADER_USER) long userId,
-                                             @PathVariable long requestId){
-        return requestService.findRequest(userId,requestId);
+                                             @PathVariable long requestId) {
+        log.info("Income GET/{} item request by User: {}", requestId, userId);
+        return requestService.findRequest(userId, requestId);
     }
 }
