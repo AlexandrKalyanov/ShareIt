@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.model.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    default User getUserOrException(Long userId) {
+    default User getUserOrException(long userId) {
         return findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
     }
 }

@@ -29,19 +29,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(long userId, UserDto userDto) {
         userDto.setId(userId);
-
-        User user = userRepository.findById(userId).orElseThrow(() -> new ObjectNotFoundException("User not found"));
+        User user = userRepository.getUserOrException(userId);
         String name = userDto.getName();
         String email = userDto.getEmail();
-
-        if (name != null && !name.isBlank()) {
-            user.setName(name);
-        }
-        if (email != null && !email.isBlank()) {
-            user.setEmail(email);
-        }
+        updateUserParam(user, name, email);
         return UserMapper.toUserDto(userRepository.save(user));
     }
+
 
     @Override
     public UserDto findById(long userId) {
@@ -57,5 +51,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void deleteById(long userId) {
         userRepository.deleteById(userId);
+    }
+
+    private static void updateUserParam(User user, String name, String email) {
+        if (name != null && !name.isBlank()) {
+            user.setName(name);
+        }
+        if (email != null && !email.isBlank()) {
+            user.setEmail(email);
+        }
     }
 }

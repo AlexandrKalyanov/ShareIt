@@ -49,11 +49,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.start < ?2 and i.end > ?2")
     Collection<Booking> findCurrentOwnerBookings(long ownerId, LocalDateTime now, PageRequest pageRequest);
 
-    @Query(value = "select i from Booking i where i.item.id = ?1 and i.item.owner.id = ?2 and i.start <= ?3  and i.status = 'APPROVED' order by i.start desc")
-    Collection<Booking> findPastOwnerBookings(long itemId, long ownerId, LocalDateTime now);
+    @Query(value = "select i from Booking i where i.item.id = ?1  and i.start <= ?2  and i.status = 'APPROVED' order by i.start desc")
+    Collection<Booking> findPastBookings(long itemId, LocalDateTime now);
 
-    @Query(value = "select i from Booking i where i.item.id =?1 and i.item.owner.id = ?2 and i.start > ?3 and i.status = 'APPROVED' order by i.start desc")
-    Collection<Booking> findFutureOwnerBookings(long itemId, long ownerId, LocalDateTime now);
+    @Query(value = "select i from Booking i where i.item.id =?1  and i.start > ?2 and i.status = 'APPROVED' order by i.start desc")
+    Collection<Booking> findFutureBookings(long itemId, LocalDateTime now);
 
     @Query(value = "select i from Booking i where i.item.id in ?1 and i.item.owner.id = ?2 and i.start <= ?3  and i.status = 'APPROVED' order by i.start desc")
     List<Booking> findPastOwnerBookingsAllThings(List<Long> itemIds, long ownerId, LocalDateTime now);

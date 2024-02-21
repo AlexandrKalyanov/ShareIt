@@ -65,17 +65,28 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemResponseDto findByItemId(long userId, long itemId) {
         Item item = itemRepository.getItemOrException(itemId);
-        BookingForItemDto lastBooking = findLastOwnerBooking(itemId, userId, LocalDateTime.now());
-        BookingForItemDto nextBooking = findNextOwnerBooking(itemId, userId, LocalDateTime.now());
         Collection<CommentDTO> commentByItem = commentRepository.findCommentByItem(itemId).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
-        return ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, commentByItem);
+        if (item.getOwner().getId() == userId) {
+            BookingForItemDto lastBooking = findLastOwnerBooking(itemId, LocalDateTime.now());
+            BookingForItemDto nextBooking = findNextOwnerBooking(itemId, LocalDateTime.now());
+            return ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, commentByItem);
+        }
+        else return ItemResponseDto.builder()
+                .id(item.getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .lastBooking(null)
+                .nextBooking(null)
+                .comments(commentByItem)
+                .build();
     }
 
     @Override
     public List<ItemResponseDto> findAllByUser(long userId, int from, int size) {
         List<ItemResponseDto> responseList = new ArrayList<>();
-        PageRequest pageRequest = PageRequest.of(from/size,size);
-        List<Item> itemsByUser = itemRepository.findAllByUser(userId,pageRequest);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        List<Item> itemsByUser = itemRepository.findAllByUser(userId, pageRequest);
         List<Long> itemsIdsList = itemsByUser.stream().map(Item::getId).collect(Collectors.toList());
         Map<Long, List<Booking>> allBookingMapLast = bookingRepository.findPastOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now())
                 .stream()
@@ -130,8 +141,8 @@ public class ItemServiceImpl implements ItemService {
         if (text.isBlank()) {
             return Collections.emptyList();
         }
-        PageRequest pageRequest = PageRequest.of(from/size,size);
-        return itemRepository.searchItems(textLowRegister,pageRequest).stream()
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        return itemRepository.searchItems(textLowRegister, pageRequest).stream()
                 .map(ItemMapper::itemToItemUpdateDto)
                 .collect(Collectors.toList());
     }
@@ -160,16 +171,16 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private BookingForItemDto findLastOwnerBooking(Long itemId, Long userId, LocalDateTime now) {
-        return bookingRepository.findPastOwnerBookings(itemId, userId, now)
+    private BookingForItemDto findLastOwnerBooking(Long itemId, LocalDateTime now) {
+        return bookingRepository.findPastBookings(itemId, now)
                 .stream()
                 .max(Comparator.comparing(Booking::getEnd))
                 .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
                 .orElse(null);
     }
 
-    private BookingForItemDto findNextOwnerBooking(Long itemId, Long userId, LocalDateTime now) {
-        return bookingRepository.findFutureOwnerBookings(itemId, userId, now)
+    private BookingForItemDto findNextOwnerBooking(Long itemId, LocalDateTime now) {
+        return bookingRepository.findFutureBookings(itemId, now)
                 .stream()
                 .min(Comparator.comparing(Booking::getStart))
                 .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
