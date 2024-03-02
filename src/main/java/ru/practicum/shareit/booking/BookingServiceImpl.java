@@ -77,10 +77,10 @@ public class BookingServiceImpl implements BookingService {
     public Collection<BookingDtoResponse> findAllByBooker(long userId, State state, int from, int size) {
         Collection<Booking> bookings;
         userRepository.getUserOrException(userId);
-        PageRequest pageRequest = PageRequest.of(from/size,size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
         switch (state) {
             case ALL:
-                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId,pageRequest).stream().map(bookingMapper::toBookingDtoResponse).collect(Collectors.toList());
+                return bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageRequest).stream().map(bookingMapper::toBookingDtoResponse).collect(Collectors.toList());
             case WAITING:
             case APPROVED:
             case REJECTED:
@@ -91,16 +91,16 @@ public class BookingServiceImpl implements BookingService {
                         status = value;
                     }
                 }
-                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, status,pageRequest);
+                bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, status, pageRequest);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(),pageRequest);
+                bookings = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), pageRequest);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(),pageRequest);
+                bookings = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), pageRequest);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findCurrentBookerBookings(userId, LocalDateTime.now(),pageRequest);
+                bookings = bookingRepository.findCurrentBookerBookings(userId, LocalDateTime.now(), pageRequest);
                 break;
             default:
                 throw new ValidationException(String.format("Unknown state: %s", state));
@@ -115,10 +115,10 @@ public class BookingServiceImpl implements BookingService {
             return Collections.emptyList();
         }
         Collection<Booking> bookings;
-        PageRequest pageRequest = PageRequest.of(from/size,size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
         switch (state) {
             case ALL:
-                bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId,pageRequest);
+                bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId, pageRequest);
                 return bookings.stream().map(bookingMapper::toBookingDtoResponse).collect(Collectors.toList());
             case WAITING:
             case APPROVED:
@@ -131,16 +131,16 @@ public class BookingServiceImpl implements BookingService {
                         status = value;
                     }
                 }
-                bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, status,pageRequest);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, status, pageRequest);
                 break;
             case PAST:
-                bookings = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now(),pageRequest);
+                bookings = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now(), pageRequest);
                 break;
             case FUTURE:
-                bookings = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(ownerId, LocalDateTime.now(),pageRequest);
+                bookings = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(ownerId, LocalDateTime.now(), pageRequest);
                 break;
             case CURRENT:
-                bookings = bookingRepository.findCurrentOwnerBookings(ownerId, LocalDateTime.now(),pageRequest);
+                bookings = bookingRepository.findCurrentOwnerBookings(ownerId, LocalDateTime.now(), pageRequest);
                 break;
 
             default:

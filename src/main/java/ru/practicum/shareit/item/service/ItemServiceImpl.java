@@ -71,8 +71,7 @@ public class ItemServiceImpl implements ItemService {
             BookingForItemDto lastBooking = findLastOwnerBooking(itemId, LocalDateTime.now());
             BookingForItemDto nextBooking = findNextOwnerBooking(itemId, LocalDateTime.now());
             return ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, commentByItem);
-        }
-        else return ItemResponseDto.builder()
+        } else return ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())

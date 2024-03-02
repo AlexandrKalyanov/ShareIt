@@ -30,6 +30,7 @@ public final class ItemMapper {
                 .request(itemRequest)
                 .build();
     }
+
     public ItemForRequest toItemForRequest(Item item) {
         if (item.getRequest() == null) {
             return ItemForRequest.builder()
@@ -39,8 +40,7 @@ public final class ItemMapper {
                     .requestId(null)
                     .available(item.getAvailable())
                     .build();
-        }
-        else return ItemForRequest.builder()
+        } else return ItemForRequest.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
@@ -58,8 +58,7 @@ public final class ItemMapper {
                     .available(item.getAvailable())
                     .requestId(null)
                     .build();
-        }
-        else return ItemResponseDto.builder()
+        } else return ItemResponseDto.builder()
                 .id(item.getId())
                 .description(item.getDescription())
                 .name(item.getName())
