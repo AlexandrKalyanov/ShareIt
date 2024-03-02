@@ -52,8 +52,6 @@ class UserServiceImplTest {
         UserDto incomeUser = new UserDto();
         incomeUser.setId(userId);
         incomeUser.setEmail("update@mail.ru");
-
-
         User oldUser = User.builder()
                 .id(userId)
                 .name("Alex")
@@ -68,13 +66,11 @@ class UserServiceImplTest {
         when(userRepository.save(updateUser)).thenReturn(updateUser);
 
 
-        userService.update(userId, incomeUser);
+        UserDto actualUser = userService.update(userId, incomeUser);
 
-        verify(userRepository).save(argumentCaptor.capture());
-        User savedUser = argumentCaptor.getValue();
 
-        assertEquals("Alex", savedUser.getName());
-        assertEquals("update@mail.ru", savedUser.getEmail());
+        assertEquals(actualUser.getName(),oldUser.getName());
+        assertEquals(actualUser.getEmail(),updateUser.getEmail());
 
     }
 
