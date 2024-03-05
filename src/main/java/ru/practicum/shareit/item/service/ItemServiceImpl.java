@@ -65,25 +65,20 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemResponseDto findByItemId(long userId, long itemId) {
+        userRepository.getUserOrException(userId);
         Item item = itemRepository.getItemOrException(itemId);
         Collection<CommentDTO> commentByItem = commentRepository.findCommentByItem(itemId).stream().map(CommentMapper::toCommentDto).collect(Collectors.toList());
         if (item.getOwner().getId() == userId) {
             BookingForItemDto lastBooking = findLastOwnerBooking(itemId, LocalDateTime.now());
             BookingForItemDto nextBooking = findNextOwnerBooking(itemId, LocalDateTime.now());
             return ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, commentByItem);
-        } else return ItemResponseDto.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .available(item.getAvailable())
-                .lastBooking(null)
-                .nextBooking(null)
-                .comments(commentByItem)
-                .build();
+        } else
+            return ItemResponseDto.builder().id(item.getId()).name(item.getName()).description(item.getDescription()).available(item.getAvailable()).lastBooking(null).nextBooking(null).comments(commentByItem).build();
     }
 
     @Override
     public List<ItemResponseDto> findAllByUser(long userId, int from, int size) {
+        userRepository.getUserOrException(userId);
         List<ItemResponseDto> responseList = new ArrayList<>();
         PageRequest pageRequest = PageRequest.of(from / size, size);
         List<Item> itemsByUser = itemRepository.findAllByUser(userId, pageRequest);
@@ -94,13 +89,11 @@ public class ItemServiceImpl implements ItemService {
         Map<Long, List<Booking>> allBookingMapNext = bookingRepository.findFutureOwnerBookingsAllThings(itemsIdsList, userId, LocalDateTime.now())
                 .stream()
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId(), Collectors.toList()));
-
         for (Item item : itemsByUser) {
             BookingForItemDto lastBooking;
             BookingForItemDto nextBooking;
             if (allBookingMapLast.containsKey(item.getId())) {
-                lastBooking = allBookingMapLast.get(item.getId())
-                        .stream()
+                lastBooking = allBookingMapLast.get(item.getId()).stream()
                         .filter(booking -> booking.getItem().getId().equals(item.getId()))
                         .max(Comparator.comparing(Booking::getEnd))
                         .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
@@ -109,22 +102,18 @@ public class ItemServiceImpl implements ItemService {
                 lastBooking = null;
             }
             if (allBookingMapNext.containsKey(item.getId())) {
-                nextBooking = allBookingMapNext.get(item.getId())
-                        .stream()
+                nextBooking = allBookingMapNext.get(item.getId()).stream()
                         .filter(booking -> booking.getItem().getId().equals(item.getId()))
                         .min(Comparator.comparing(Booking::getStart))
                         .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
                         .orElse(null);
-
             } else {
                 nextBooking = null;
             }
             ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item, lastBooking, nextBooking, Collections.emptyList());
             responseList.add(itemResponseDto);
         }
-        Map<Long, List<Comment>> collect = commentRepository.findAllCommentsInListItemsIds(itemsByUser.stream().map(Item::getId).collect(Collectors.toList()))
-                .stream()
-                .collect(Collectors.groupingBy(comment -> comment.getItem().getId(), Collectors.toCollection(ArrayList::new)));
+        Map<Long, List<Comment>> collect = commentRepository.findAllCommentsInListItemsIds(itemsByUser.stream().map(Item::getId).collect(Collectors.toList())).stream().collect(Collectors.groupingBy(comment -> comment.getItem().getId(), Collectors.toCollection(ArrayList::new)));
 
         for (ItemResponseDto itemResponseDto : responseList) {
             Long itemResponseDtoId = itemResponseDto.getId();
@@ -133,7 +122,6 @@ public class ItemServiceImpl implements ItemService {
         }
         return responseList;
     }
-
     @Override
     public List<ItemResponseDto> searchItems(long userId, String text, int from, int size) {
         String textLowRegister = text.toLowerCase();
@@ -142,9 +130,7 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
         PageRequest pageRequest = PageRequest.of(from / size, size);
-        return itemRepository.searchItems(textLowRegister, pageRequest).stream()
-                .map(ItemMapper::itemToItemUpdateDto)
-                .collect(Collectors.toList());
+        return itemRepository.searchItems(textLowRegister, pageRequest).stream().map(ItemMapper::itemToItemUpdateDto).collect(Collectors.toList());
     }
 
     @Override
@@ -172,18 +158,12 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private BookingForItemDto findLastOwnerBooking(Long itemId, LocalDateTime now) {
-        return bookingRepository.findPastBookings(itemId, now)
-                .stream()
+        return bookingRepository.findPastBookings(itemId, now).stream()
                 .max(Comparator.comparing(Booking::getEnd))
-                .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
-                .orElse(null);
+                .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId())).orElse(null);
     }
 
     private BookingForItemDto findNextOwnerBooking(Long itemId, LocalDateTime now) {
-        return bookingRepository.findFutureBookings(itemId, now)
-                .stream()
-                .min(Comparator.comparing(Booking::getStart))
-                .map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId()))
-                .orElse(null);
+        return bookingRepository.findFutureBookings(itemId, now).stream().min(Comparator.comparing(Booking::getStart)).map(booking -> new BookingForItemDto(booking.getId(), booking.getStart(), booking.getEnd(), booking.getBooker().getId())).orElse(null);
     }
 }
