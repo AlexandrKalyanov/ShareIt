@@ -69,8 +69,8 @@ class UserServiceImplTest {
         UserDto actualUser = userService.update(userId, incomeUser);
 
 
-        assertEquals(actualUser.getName(),oldUser.getName());
-        assertEquals(actualUser.getEmail(),updateUser.getEmail());
+        assertEquals(actualUser.getName(), oldUser.getName());
+        assertEquals(actualUser.getEmail(), updateUser.getEmail());
 
     }
 

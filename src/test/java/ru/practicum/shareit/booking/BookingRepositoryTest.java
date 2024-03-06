@@ -35,9 +35,8 @@ class BookingRepositoryTest {
     long bookingId;
 
 
-
     @BeforeEach
-   public void addUserAndItem() {
+    public void addUserAndItem() {
         User user = new User(null, "test", "test@test.ru");
         Item item = new Item(null, "otvertka", "otvertka", true, user, null);
         Booking booking = Booking.builder()
@@ -54,6 +53,7 @@ class BookingRepositoryTest {
         bookingRepository.save(booking);
         bookingId = booking.getId();
     }
+
     @AfterEach
     public void deleteBookings() {
         userRepository.deleteAll();
@@ -72,88 +72,88 @@ class BookingRepositoryTest {
 
     @Test
     void findAllByBookerIdAndStatusOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId,BookingStatus.APPROVED, PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, BookingStatus.APPROVED, PAGE_REQUEST);
         assertEquals(expected.size(), 1);
     }
 
 
     @Test
     void findAllByBookerIdAndEndBeforeOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId,LocalDateTime.now(), PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 0);
 
     }
 
     @Test
     void findAllByBookerIdAndStartAfterOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId,LocalDateTime.now(),PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findAllByBookerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 0);
     }
 
     @Test
     void findCurrentBookerBookings() {
-        Collection<Booking> expected = bookingRepository.findCurrentBookerBookings(userId,LocalDateTime.now(),PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findCurrentBookerBookings(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findAllByItemOwnerIdOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findCurrentBookerBookings(userId,LocalDateTime.now(),PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findCurrentBookerBookings(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findAllByItemOwnerIdAndStatusOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId,BookingStatus.APPROVED,PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findAllByItemOwnerIdAndStatusOrderByStartDesc(userId, BookingStatus.APPROVED, PAGE_REQUEST);
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findAllByItemOwnerIdAndEndBeforeOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId,LocalDateTime.now(),PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 0);
 
     }
 
     @Test
     void findAllByItemOwnerIdAndStartAfterOrderByStartDesc() {
-        Collection<Booking> expected = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId,LocalDateTime.now(),PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findAllByItemOwnerIdAndStartAfterOrderByStartDesc(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 0);
     }
 
     @Test
     void findCurrentOwnerBookings() {
-        Collection<Booking> expected = bookingRepository.findCurrentOwnerBookings(userId,LocalDateTime.now(),PAGE_REQUEST);
+        Collection<Booking> expected = bookingRepository.findCurrentOwnerBookings(userId, LocalDateTime.now(), PAGE_REQUEST);
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findPastBookings() {
-        Collection<Booking> expected = bookingRepository.findPastBookings(itemId,LocalDateTime.now());
+        Collection<Booking> expected = bookingRepository.findPastBookings(itemId, LocalDateTime.now());
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findFutureBookings() {
-        Collection<Booking> expected = bookingRepository.findFutureBookings(itemId,LocalDateTime.now());
+        Collection<Booking> expected = bookingRepository.findFutureBookings(itemId, LocalDateTime.now());
         assertEquals(expected.size(), 0);
     }
 
     @Test
     void findPastOwnerBookingsAllThings() {
-        Collection<Booking> expected = bookingRepository.findPastOwnerBookingsAllThings(List.of(itemId),userId,LocalDateTime.now());
+        Collection<Booking> expected = bookingRepository.findPastOwnerBookingsAllThings(List.of(itemId), userId, LocalDateTime.now());
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findFutureOwnerBookingsAllThings() {
-        Collection<Booking> expected = bookingRepository.findPastOwnerBookingsAllThings(List.of(itemId),userId,LocalDateTime.now());
+        Collection<Booking> expected = bookingRepository.findPastOwnerBookingsAllThings(List.of(itemId), userId, LocalDateTime.now());
         assertEquals(expected.size(), 1);
     }
 
     @Test
     void findBookings() {
-        boolean expected = bookingRepository.findBookings(itemId,userId,LocalDateTime.now());
+        boolean expected = bookingRepository.findBookings(itemId, userId, LocalDateTime.now());
         assertFalse(expected);
     }
 }

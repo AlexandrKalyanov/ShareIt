@@ -122,6 +122,7 @@ public class ItemServiceImpl implements ItemService {
         }
         return responseList;
     }
+
     @Override
     public List<ItemResponseDto> searchItems(long userId, String text, int from, int size) {
         String textLowRegister = text.toLowerCase();
