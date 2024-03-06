@@ -48,7 +48,6 @@ class ItemServiceImplTest {
     private ItemServiceImpl itemService;
 
 
-
     @Test
     void create_whenInvoked_withoutItemRequest_thenReturnedItem() {
         long userId = 1L;
@@ -425,21 +424,22 @@ class ItemServiceImplTest {
                 .author(user)
                 .created(LocalDateTime.now())
                 .build();
-        when(itemRepository.findAllByUser(anyLong(),any(PageRequest.class))).thenReturn(List.of(item));
-        when(bookingRepository.findPastOwnerBookingsAllThings(anyList(),anyLong(),any(LocalDateTime.class))).thenReturn(List.of(last));
-        when(bookingRepository.findFutureOwnerBookingsAllThings(anyList(),anyLong(),any(LocalDateTime.class))).thenReturn(List.of(next));
+        when(itemRepository.findAllByUser(anyLong(), any(PageRequest.class))).thenReturn(List.of(item));
+        when(bookingRepository.findPastOwnerBookingsAllThings(anyList(), anyLong(), any(LocalDateTime.class))).thenReturn(List.of(last));
+        when(bookingRepository.findFutureOwnerBookingsAllThings(anyList(), anyLong(), any(LocalDateTime.class))).thenReturn(List.of(next));
         when(commentRepository.findAllCommentsInListItemsIds(anyList())).thenReturn(List.of(comment));
 
         ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item,
-                new BookingForItemDto(last.getId(),last.getStart(),last.getEnd(),last.getBooker().getId()),
-                        new BookingForItemDto(next.getId(),next.getStart(),next.getEnd(),next.getBooker().getId()),
-                        List.of(CommentMapper.toCommentDto(comment)));
+                new BookingForItemDto(last.getId(), last.getStart(), last.getEnd(), last.getBooker().getId()),
+                new BookingForItemDto(next.getId(), next.getStart(), next.getEnd(), next.getBooker().getId()),
+                List.of(CommentMapper.toCommentDto(comment)));
 
         List<ItemResponseDto> expected = List.of(itemResponseDto);
         List<ItemResponseDto> actual = itemService.findAllByUser(userId, 0, 10);
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
 
     }
+
     @Test
     void findAllByUser_whenBookingNon_thenReturnedItemList() {
         long userId = 1L;
@@ -461,9 +461,9 @@ class ItemServiceImplTest {
                 .author(user)
                 .created(LocalDateTime.now())
                 .build();
-        when(itemRepository.findAllByUser(anyLong(),any(PageRequest.class))).thenReturn(List.of(item));
-        when(bookingRepository.findPastOwnerBookingsAllThings(anyList(),anyLong(),any(LocalDateTime.class))).thenReturn(Collections.emptyList());
-        when(bookingRepository.findFutureOwnerBookingsAllThings(anyList(),anyLong(),any(LocalDateTime.class))).thenReturn(Collections.emptyList());
+        when(itemRepository.findAllByUser(anyLong(), any(PageRequest.class))).thenReturn(List.of(item));
+        when(bookingRepository.findPastOwnerBookingsAllThings(anyList(), anyLong(), any(LocalDateTime.class))).thenReturn(Collections.emptyList());
+        when(bookingRepository.findFutureOwnerBookingsAllThings(anyList(), anyLong(), any(LocalDateTime.class))).thenReturn(Collections.emptyList());
         when(commentRepository.findAllCommentsInListItemsIds(anyList())).thenReturn(List.of(comment));
 
         ItemResponseDto itemResponseDto = ItemMapper.toItemResponseDto(item,
@@ -473,7 +473,7 @@ class ItemServiceImplTest {
 
         List<ItemResponseDto> expected = List.of(itemResponseDto);
         List<ItemResponseDto> actual = itemService.findAllByUser(userId, 0, 10);
-        assertEquals(expected,actual);
+        assertEquals(expected, actual);
 
     }
 
@@ -519,7 +519,7 @@ class ItemServiceImplTest {
 
         assertEquals(List.of(itemResponseDto), actual);
         verify(userRepository).getUserOrException(anyLong());
-        verify(itemRepository).searchItems(anyString(),any(PageRequest.class));
+        verify(itemRepository).searchItems(anyString(), any(PageRequest.class));
     }
 
     @Test
