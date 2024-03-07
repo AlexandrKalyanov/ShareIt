@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     /**
-     *
      * @param itemId индетификатор вещи
      * @return Возвращает коллекцию комментариев, относящиеся к данной вещи
      */

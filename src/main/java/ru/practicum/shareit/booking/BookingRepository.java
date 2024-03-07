@@ -18,7 +18,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long userId, BookingStatus status, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.booker.id = ?1 and i.end <?2 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.booker.id =?1 and i.end <?2")
+            countQuery = "select count(i) from Booking i where i.booker.id =?1 and i.end <?2")
     Collection<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime now, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.booker.id = ?1 and i.start > ?2 order by i.start desc",
@@ -26,27 +26,27 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     Collection<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(long userId, LocalDateTime now, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.booker.id = ?1 and i.start <?2 and i.end > ?2 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.booker.id = ?1 and i.start <?2 and i.end > ?2")
+            countQuery = "select count(i) from Booking i where i.booker.id = ?1 and i.start <?2 and i.end > ?2")
     Collection<Booking> findCurrentBookerBookings(long userId, LocalDateTime now, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.item.owner.id = ?1 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.item.owner.id = ?1")
+            countQuery = "select count(i) from Booking i where i.item.owner.id = ?1")
     Collection<Booking> findAllByItemOwnerIdOrderByStartDesc(long ownerId, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.item.owner.id =?1 and i.status = ?2 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.item.owner.id =?1 and i.status = ?2")
+            countQuery = "select count(i) from Booking i where i.item.owner.id =?1 and i.status = ?2")
     Collection<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(long ownerId, BookingStatus status, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.item.owner.id = ?1 and i.end < ?2 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.end < ?2")
+            countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.end < ?2")
     Collection<Booking> findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(long ownerId, LocalDateTime now, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.item.owner.id = ?1 and i.start > ?2 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.start > ?2")
+            countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.start > ?2")
     Collection<Booking> findAllByItemOwnerIdAndStartAfterOrderByStartDesc(long ownerId, LocalDateTime now, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.item.owner.id = ?1 and i.start < ?2 and i.end > ?2 order by i.start desc",
-    countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.start < ?2 and i.end > ?2")
+            countQuery = "select count(i) from Booking i where i.item.owner.id = ?1 and i.start < ?2 and i.end > ?2")
     Collection<Booking> findCurrentOwnerBookings(long ownerId, LocalDateTime now, PageRequest pageRequest);
 
     @Query(value = "select i from Booking i where i.item.id = ?1  and i.start <= ?2  and i.status = 'APPROVED' order by i.start desc")

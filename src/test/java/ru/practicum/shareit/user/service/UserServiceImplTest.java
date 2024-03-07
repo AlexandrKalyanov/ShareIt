@@ -14,14 +14,18 @@ import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ru.practicum.shareit.user.dto.UserMapper.*;
+import static ru.practicum.shareit.user.dto.UserMapper.toUser;
+import static ru.practicum.shareit.user.dto.UserMapper.toUserDto;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {

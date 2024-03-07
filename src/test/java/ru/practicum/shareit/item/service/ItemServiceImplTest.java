@@ -28,7 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -56,7 +57,6 @@ class ItemServiceImplTest {
                 .email("mail@mail.ru")
                 .name("Alex")
                 .build();
-
         ItemRequestDto itemRequestDto = ItemRequestDto.builder()
                 .name("otvertka")
                 .description("New otvertka")

@@ -47,19 +47,19 @@ public class BookingController {
     @GetMapping
     public Collection<BookingDtoResponse> findAllByBooker(@RequestHeader(HEADER_USER) long userId,
                                                           @RequestParam(defaultValue = "ALL") State state,
-                                                          @Valid @RequestParam(defaultValue = "0")@Min(0) int from,
-                                                          @Valid @RequestParam(defaultValue = "10")@Min(0)  int size) {
+                                                          @Valid @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                          @Valid @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET bookings userID:{} state:{},", userId, state);
-        return this.bookingService.findAllByBooker(userId, state,from,size);
+        return this.bookingService.findAllByBooker(userId, state, from, size);
     }
 
     @GetMapping("/owner")
     public Collection<BookingDtoResponse> getAllForOwner(@RequestHeader(HEADER_USER) long ownerId,
                                                          @RequestParam(defaultValue = "ALL") State state,
-                                                         @RequestParam(defaultValue = "0")@Min(0) int from,
-                                                         @RequestParam(defaultValue = "10")@Min(0)  int size) {
+                                                         @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                         @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET bookings ownerID:{} state:{},", ownerId, state);
-        return bookingService.findAllForOwner(ownerId, state,from,size);
+        return bookingService.findAllForOwner(ownerId, state, from, size);
     }
 
 }

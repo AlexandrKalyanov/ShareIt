@@ -38,7 +38,8 @@ public class BookingServiceImpl implements BookingService {
             throw new ObjectNotFoundException("Вы не можете бронировать свою вещь");
         }
         Booking booking = getBooking(bookingDtoRequest, booker, item);
-        return bookingMapper.toBookingDtoResponse(bookingRepository.save(booking));
+        Booking bookingSave = bookingRepository.save(booking);
+        return bookingMapper.toBookingDtoResponse(bookingSave);
 
     }
 
@@ -70,7 +71,6 @@ public class BookingServiceImpl implements BookingService {
             }
         }
         return bookingMapper.toBookingDtoResponse(booking);
-
     }
 
     @Override
@@ -89,6 +89,7 @@ public class BookingServiceImpl implements BookingService {
                 for (BookingStatus value : BookingStatus.values()) {
                     if (value.name().equals(state.name())) {
                         status = value;
+                        break;
                     }
                 }
                 bookings = bookingRepository.findAllByBookerIdAndStatusOrderByStartDesc(userId, status, pageRequest);

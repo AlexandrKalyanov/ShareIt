@@ -11,7 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.Collection;
 
-
 import static ru.practicum.shareit.GlobalConst.HEADER_USER;
 
 @Slf4j
