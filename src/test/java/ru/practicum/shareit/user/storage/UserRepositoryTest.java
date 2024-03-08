@@ -20,7 +20,7 @@ class UserRepositoryTest {
 
     @BeforeEach
     void addUser() {
-       user = new User(null, "Alex", "Alex@mail.ru");
+        user = new User(null, "Alex", "Alex@mail.ru");
         userRepository.save(user);
     }
 
