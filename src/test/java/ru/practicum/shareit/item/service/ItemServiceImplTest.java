@@ -258,6 +258,26 @@ class ItemServiceImplTest {
         ItemResponseDto actual = itemService.update(userId, itemRequestDto, 1L);
         assertEquals(expected, actual);
     }
+    @Test
+    void update_whenItemNotFound_ObjectNotFoundException() {
+        long userId = 1L;
+        User user = User.builder()
+                .id(userId)
+                .email("mail@mail.ru")
+                .name("Alex")
+                .build();
+        ItemRequestDto itemRequestDto = ItemRequestDto.builder()
+                .name("otvertka update")
+                .description("update New otvertka")
+                .requestId(1L)
+                .available(true)
+                .build();
+
+        when(userRepository.getUserOrException(anyLong())).thenReturn(user);
+        when(itemRepository.findByIdWithUser(1L, userId)).thenReturn(Optional.empty());
+
+        assertThrows(ObjectNotFoundException.class, ()->itemService.update(userId, itemRequestDto, 1L));
+    }
 
     @Test
     void findByItemId_whenUserIsOwner_returnedItem() {
