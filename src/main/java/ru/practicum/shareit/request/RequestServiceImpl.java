@@ -79,7 +79,7 @@ public class RequestServiceImpl implements RequestService {
     }
 
     @Override
-    public List<ItemRequestOutcomeDto> findAll(long userId, int from, int size) {
+    public Collection<ItemRequestOutcomeDto> findAll(long userId, int from, int size) {
         userRepository.getUserOrException(userId);
         PageRequest pageRequest = PageRequest.of(from / size, size, Sort.by(Sort.Direction.DESC, "created"));
         List<ItemRequestOutcomeDto> itemRequestOutcomeDtos = requestRepository.findAllWithPage(userId, pageRequest)
