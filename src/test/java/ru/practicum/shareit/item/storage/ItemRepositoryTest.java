@@ -14,6 +14,7 @@ import ru.practicum.shareit.request.RequestRepository;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.storage.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,13 +36,10 @@ class ItemRepositoryTest {
 
     @BeforeEach
     void addData() {
-        ItemRequest itemRequest = ItemRequest.builder()
-                .id(1L).build();
-        requestRepository.save(itemRequest);
         User user = new User(null, "test", "test@test.ru");
-        Item item = new Item(null, "otvertka", "otvertka", true, user, itemRequest);
         userRepository.save(user);
         userId = user.getId();
+        Item item = new Item(null, "otvertka", "otvertka", true, user, null);
         itemRepository.save(item);
         itemId = item.getId();
     }
@@ -50,6 +48,7 @@ class ItemRepositoryTest {
     void deleteData() {
         userRepository.deleteAll();
         itemRepository.deleteAll();
+        requestRepository.deleteAll();
     }
 
     @Test
@@ -78,6 +77,16 @@ class ItemRepositoryTest {
 
     @Test
     void searchByRequestIds() {
+        User user2 = new User(null, "test2", "test2@test.ru");
+        userRepository.save(user2);
+        ItemRequest itemRequest = ItemRequest.builder()
+                .id(1L)
+                .requester(user2)
+                .description("lolo")
+                .created(LocalDateTime.now()).build();
+        requestRepository.save(itemRequest);
+        Item item = new Item(null, "otvertka", "otvertka", true, user2, itemRequest);
+        itemRepository.save(item);
         List<Item> actual = itemRepository.searchByRequestIds(List.of(1L));
         assertEquals(1, actual.size());
     }
