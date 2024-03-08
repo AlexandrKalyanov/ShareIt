@@ -89,13 +89,14 @@ class ItemRequestControllerTest {
 
         assertEquals(objectMapper.writeValueAsString(itemRequestOutcomeDtosList), result);
     }
+
     @SneakyThrows
     @Test
     void findRequest() {
         ItemRequestOutcomeDto itemRequestOutcomeDto = ItemRequestOutcomeDto.builder()
                 .id(1L)
                 .build();
-        when(requestService.findRequest(1L,1L)).thenReturn(itemRequestOutcomeDto);
+        when(requestService.findRequest(1L, 1L)).thenReturn(itemRequestOutcomeDto);
         String result = mockMvc.perform(get("/requests/1").header(HEADER_USER, 1))
                 .andExpect(status().isOk())
                 .andReturn()
