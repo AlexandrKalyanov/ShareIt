@@ -258,6 +258,7 @@ class ItemServiceImplTest {
         ItemResponseDto actual = itemService.update(userId, itemRequestDto, 1L);
         assertEquals(expected, actual);
     }
+
     @Test
     void update_whenItemNotFound_ObjectNotFoundException() {
         long userId = 1L;
@@ -276,7 +277,7 @@ class ItemServiceImplTest {
         when(userRepository.getUserOrException(anyLong())).thenReturn(user);
         when(itemRepository.findByIdWithUser(1L, userId)).thenReturn(Optional.empty());
 
-        assertThrows(ObjectNotFoundException.class, ()->itemService.update(userId, itemRequestDto, 1L));
+        assertThrows(ObjectNotFoundException.class, () -> itemService.update(userId, itemRequestDto, 1L));
     }
 
     @Test
