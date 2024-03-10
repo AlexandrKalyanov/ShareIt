@@ -40,13 +40,15 @@ public final class ItemMapper {
                     .requestId(null)
                     .available(item.getAvailable())
                     .build();
-        } else return ItemForRequest.builder()
-                .id(item.getId())
-                .name(item.getName())
-                .description(item.getDescription())
-                .requestId(item.getRequest().getId())
-                .available(item.getAvailable())
-                .build();
+        } else {
+            return ItemForRequest.builder()
+                    .id(item.getId())
+                    .name(item.getName())
+                    .description(item.getDescription())
+                    .requestId(item.getRequest().getId())
+                    .available(item.getAvailable())
+                    .build();
+        }
     }
 
     public ItemResponseDto itemToItemUpdateDto(Item item) {
@@ -58,12 +60,14 @@ public final class ItemMapper {
                     .available(item.getAvailable())
                     .requestId(null)
                     .build();
-        } else return ItemResponseDto.builder()
-                .id(item.getId())
-                .description(item.getDescription())
-                .name(item.getName())
-                .available(item.getAvailable())
-                .requestId(item.getRequest().getId())
-                .build();
+        } else {
+            return ItemResponseDto.builder()
+                    .id(item.getId())
+                    .description(item.getDescription())
+                    .name(item.getName())
+                    .available(item.getAvailable())
+                    .requestId(item.getRequest().getId())
+                    .build();
+        }
     }
 }

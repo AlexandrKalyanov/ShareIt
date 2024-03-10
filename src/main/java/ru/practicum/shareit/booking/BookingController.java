@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDtoRequest;
@@ -50,16 +51,18 @@ public class BookingController {
                                                           @Valid @RequestParam(defaultValue = "0") @Min(0) int from,
                                                           @Valid @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET bookings userID:{} state:{},", userId, state);
-        return this.bookingService.findAllByBooker(userId, state, from, size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        return this.bookingService.findAllByBooker(userId, state, pageRequest);
     }
 
     @GetMapping("/owner")
     public Collection<BookingDtoResponse> findAllForOwner(@RequestHeader(HEADER_USER) long ownerId,
-                                                         @RequestParam(defaultValue = "ALL") State state,
-                                                         @RequestParam(defaultValue = "0") @Min(0) int from,
-                                                         @RequestParam(defaultValue = "10") @Min(0) int size) {
+                                                          @RequestParam(defaultValue = "ALL") State state,
+                                                          @RequestParam(defaultValue = "0") @Min(0) int from,
+                                                          @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET bookings ownerID:{} state:{},", ownerId, state);
-        return bookingService.findAllForOwner(ownerId, state, from, size);
+        PageRequest pageRequest = PageRequest.of(from / size, size);
+        return bookingService.findAllForOwner(ownerId, state, pageRequest);
     }
 
 }

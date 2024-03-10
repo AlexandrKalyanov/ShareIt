@@ -461,9 +461,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByBooker_whenStateIsApproved_thenReturnedListOfBooking() {
-        int from = 0;
-        int size = 10;
-        PageRequest pageRequest = PageRequest.of(0, size);
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -508,16 +506,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.APPROVED, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.APPROVED, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllByBooker_whenStateIsAll_thenReturnedListOfBooking() {
-        int from = 0;
-        int size = 10;
-        PageRequest pageRequest = PageRequest.of(0, size);
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -562,15 +558,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.ALL, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.ALL, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllByBooker_whenStateIsPast_thenReturnedListOfBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -615,15 +610,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.PAST, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.PAST, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllByBooker_whenStateIsFuture_thenReturnedListOfBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -668,15 +662,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.FUTURE, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.FUTURE, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllByBooker_whenStateIsCurrent_thenReturnedListOfBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -720,7 +713,7 @@ class BookingServiceImplTest {
         when(bookingRepository.findCurrentBookerBookings(anyLong(), any(LocalDateTime.class), any(PageRequest.class))).thenReturn(List.of(booking));
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.CURRENT, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllByBooker(userId, State.CURRENT, pageRequest);
         assertEquals(expected, actual);
         verify(userRepository).getUserOrException(anyLong());
         verify(bookingRepository).findCurrentBookerBookings(anyLong(), any(LocalDateTime.class), any(PageRequest.class));
@@ -728,8 +721,7 @@ class BookingServiceImplTest {
 
     @Test
     void findAllByBooker_whenStateIsUnknown_thenReturnedListOfBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -737,15 +729,13 @@ class BookingServiceImplTest {
                 .name("Alex")
                 .build();
         when(userRepository.getUserOrException(anyLong())).thenReturn(user);
-        assertThrows(ValidationException.class, () -> bookingService.findAllByBooker(userId, State.UNSUPPORTED_STATUS, from, size));
+        assertThrows(ValidationException.class, () -> bookingService.findAllByBooker(userId, State.UNSUPPORTED_STATUS, pageRequest));
         verify(userRepository).getUserOrException(anyLong());
     }
 
     @Test
     void findAllForOwner_whenStateIsAll_whenReturnedBooking() {
-        int from = 0;
-        int size = 10;
-        PageRequest pageRequest = PageRequest.of(0, size);
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -791,15 +781,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.ALL, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.ALL, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllForOwner_whenItemIsEmpty_whenReturnedEmptyList() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -812,15 +801,14 @@ class BookingServiceImplTest {
         when(itemRepository.existsByOwnerId(anyLong())).thenReturn(false);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.ALL, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.ALL, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllForOwner_whenStateIsWaiting_whenReturnedBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -866,15 +854,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.WAITING, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.WAITING, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllForOwner_whenStateIsPast_whenReturnedBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -920,15 +907,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.PAST, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.PAST, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllForOwner_whenStateIsFuture_whenReturnedBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -974,15 +960,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.FUTURE, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.FUTURE, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllForOwner_whenStateIsCurrent_whenReturnedBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -1028,15 +1013,14 @@ class BookingServiceImplTest {
         when(bookingMapper.toBookingDtoResponse(booking)).thenReturn(bookingDtoResponse);
 
 
-        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.CURRENT, from, size);
+        Collection<BookingDtoResponse> actual = bookingService.findAllForOwner(userId, State.CURRENT, pageRequest);
 
         assertEquals(expected, actual);
     }
 
     @Test
     void findAllForOwner_whenStateIsUnknown_whenReturnedBooking() {
-        int from = 0;
-        int size = 10;
+        PageRequest pageRequest = PageRequest.of(0, 10);
         long userId = 1L;
         User user = User.builder()
                 .id(userId)
@@ -1046,6 +1030,6 @@ class BookingServiceImplTest {
         when(userRepository.getUserOrException(anyLong())).thenReturn(user);
         when(itemRepository.existsByOwnerId(anyLong())).thenReturn(true);
 
-        assertThrows(ValidationException.class, () -> bookingService.findAllForOwner(userId, State.UNSUPPORTED_STATUS, from, size));
+        assertThrows(ValidationException.class, () -> bookingService.findAllForOwner(userId, State.UNSUPPORTED_STATUS, pageRequest));
     }
 }

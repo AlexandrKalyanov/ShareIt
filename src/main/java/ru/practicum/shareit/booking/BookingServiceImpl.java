@@ -74,10 +74,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDtoResponse> findAllByBooker(long userId, State state, int from, int size) {
+    public Collection<BookingDtoResponse> findAllByBooker(long userId, State state, PageRequest pageRequest) {
         Collection<Booking> bookings;
         userRepository.getUserOrException(userId);
-        PageRequest pageRequest = PageRequest.of(from / size, size);
         switch (state) {
             case ALL:
                 return bookingRepository.findAllByBookerIdOrderByStartDesc(userId, pageRequest).stream().map(bookingMapper::toBookingDtoResponse).collect(Collectors.toList());
@@ -110,13 +109,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public Collection<BookingDtoResponse> findAllForOwner(long ownerId, State state, int from, int size) {
+    public Collection<BookingDtoResponse> findAllForOwner(long ownerId, State state, PageRequest pageRequest) {
         userRepository.getUserOrException(ownerId);
         if (!itemRepository.existsByOwnerId(ownerId)) {
             return Collections.emptyList();
         }
         Collection<Booking> bookings;
-        PageRequest pageRequest = PageRequest.of(from / size, size);
         switch (state) {
             case ALL:
                 bookings = bookingRepository.findAllByItemOwnerIdOrderByStartDesc(ownerId, pageRequest);
