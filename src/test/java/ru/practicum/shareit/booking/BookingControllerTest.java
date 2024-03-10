@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -123,7 +122,7 @@ class BookingControllerTest {
                 .itemId(null)
                 .build();
         Collection<BookingDtoResponse> bookingDtoResponseList = List.of(bookingDtoResponse);
-        when(bookingService.findAllForOwner(1L, State.ALL, any(PageRequest.class))).thenReturn(bookingDtoResponseList);
+        when(bookingService.findAllForOwner(1L, State.ALL, PageRequest.of(0,10))).thenReturn(bookingDtoResponseList);
         String result = mockMvc.perform(get("/bookings/owner?state=ALL&from=0&size=10").header(HEADER_USER, 1))
                 .andExpect(status().isOk())
                 .andReturn()
