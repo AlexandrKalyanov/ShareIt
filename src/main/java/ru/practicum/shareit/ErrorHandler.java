@@ -3,9 +3,10 @@ package ru.practicum.shareit;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.exceptions.ObjectNotFoundException;
-import ru.practicum.shareit.exceptions.ValidateException;
 import ru.practicum.shareit.exceptions.ValidationException;
 
 import java.util.Map;
@@ -25,13 +26,6 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleValidate(final MethodArgumentNotValidException e) {
         log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
-        return Map.of("Error message", e.getMessage());
-    }
-
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleValidateException(final ValidateException e) {
-        log.debug("Получен статус 409 Conflict {}", e.getMessage(), e);
         return Map.of("Error message", e.getMessage());
     }
 

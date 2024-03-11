@@ -8,6 +8,10 @@ import java.util.List;
 
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
+    /**
+     * @param itemId индетификатор вещи
+     * @return Возвращает коллекцию комментариев, относящиеся к данной вещи
+     */
     @Query("select i from Comment i where i.item.id =?1 order by i.created desc")
     Collection<Comment> findCommentByItem(Long itemId);
 
