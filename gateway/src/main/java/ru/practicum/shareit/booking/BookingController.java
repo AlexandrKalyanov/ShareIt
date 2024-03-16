@@ -10,6 +10,7 @@ import ru.practicum.shareit.booking.dto.BookingDtoRequest;
 import ru.practicum.shareit.booking.dto.State;
 
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.GlobalConst.HEADER_USER;
@@ -25,7 +26,7 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader(HEADER_USER) long userId,
-                                         @RequestBody BookingDtoRequest bookingDtoRequest) {
+                                        @Valid @RequestBody BookingDtoRequest bookingDtoRequest) {
         log.info("Income POST request to create booking DTO: {}, user ID: {}", bookingDtoRequest, userId);
         return bookingClient.bookItem(userId, bookingDtoRequest);
     }

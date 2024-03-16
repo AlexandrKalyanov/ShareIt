@@ -12,6 +12,7 @@ import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.valiadateGroup.Create;
 import ru.practicum.shareit.item.dto.valiadateGroup.Update;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import java.util.Collections;
@@ -76,7 +77,7 @@ public class ItemController {
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> createComment(@RequestHeader(HEADER_USER) long userId,
                                                 @PathVariable long itemId,
-                                                @RequestBody CommentDTOShort commentDTOshort) {
+                                                @Valid @RequestBody CommentDTOShort commentDTOshort) {
         log.info("Income POST request to create comment user ID: {}, itemID: {}, Comment: {}", userId, itemId, commentDTOshort);
         return itemClient.createComment(userId, itemId, commentDTOshort);
     }

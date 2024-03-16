@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestIncomeDto;
 
+import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.GlobalConst.HEADER_USER;
@@ -22,7 +23,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader(HEADER_USER) long userId,
-                                         @RequestBody ItemRequestIncomeDto itemRequestIncomeDto) {
+                                         @Valid @RequestBody ItemRequestIncomeDto itemRequestIncomeDto) {
         log.info("Income POST item request DTO: {}", itemRequestIncomeDto);
 
         return itemRequestClient.create(userId, itemRequestIncomeDto);
