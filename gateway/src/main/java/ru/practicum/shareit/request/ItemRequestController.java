@@ -3,11 +3,11 @@ package ru.practicum.shareit.request;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestIncomeDto;
 
-import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
 import static ru.practicum.shareit.GlobalConst.HEADER_USER;
@@ -15,14 +15,14 @@ import static ru.practicum.shareit.GlobalConst.HEADER_USER;
 @Slf4j
 @RequiredArgsConstructor
 @Validated
-@RestController
+@Controller
 @RequestMapping(path = "/requests")
 public class ItemRequestController {
     private final ItemRequestClient itemRequestClient;
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader(HEADER_USER) long userId,
-                                         @Valid @RequestBody ItemRequestIncomeDto itemRequestIncomeDto) {
+                                         @RequestBody ItemRequestIncomeDto itemRequestIncomeDto) {
         log.info("Income POST item request DTO: {}", itemRequestIncomeDto);
 
         return itemRequestClient.create(userId, itemRequestIncomeDto);
@@ -36,8 +36,8 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> findAll(@RequestHeader(HEADER_USER) long userId,
-                                          @RequestParam(defaultValue = "0") @Valid @Min(0) int from,
-                                          @RequestParam(defaultValue = "10") @Valid @Min(0) int size) {
+                                          @RequestParam(defaultValue = "0") @Min(0) int from,
+                                          @RequestParam(defaultValue = "10") @Min(0) int size) {
         log.info("Income GET/all item request by User: {}", userId);
         return itemRequestClient.findAll(userId, from, size);
     }

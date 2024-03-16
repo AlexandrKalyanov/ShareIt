@@ -124,9 +124,6 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemResponseDto> searchItems(long userId, String text, int from, int size) {
         String textLowRegister = text.toLowerCase();
         userRepository.getUserOrException(userId);
-        if (text.isBlank()) {
-            return Collections.emptyList();
-        }
         PageRequest pageRequest = PageRequest.of(from / size, size);
         return itemRepository.searchItems(textLowRegister, pageRequest).stream().map(ItemMapper::itemToItemUpdateDto).collect(Collectors.toList());
     }
